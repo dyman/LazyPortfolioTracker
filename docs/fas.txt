@@ -1,0 +1,4 @@
+update-alternatives --config java
+update-alternatives --config javac
+
+https://github.com/dymaFAS/FAS.git
