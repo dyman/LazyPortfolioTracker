@@ -14,9 +14,41 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = PlayEvolutions.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Country.schema ++ PlayEvolutions.schema ++ User.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
+
+  /** Entity class storing rows of table Country
+   *  @param id Database column id SqlType(int2), PrimaryKey
+   *  @param code Database column code SqlType(varchar), Length(10,true), Default(None)
+   *  @param allowed Database column allowed SqlType(bool), Default(None)
+   *  @param currency Database column currency SqlType(varchar), Length(3,true), Default(None)
+   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None) */
+  case class CountryRow(id: Short, code: Option[String] = None, allowed: Option[Boolean] = None, currency: Option[String] = None, name: Option[String] = None)
+  /** GetResult implicit for fetching CountryRow objects using plain SQL queries */
+  implicit def GetResultCountryRow(implicit e0: GR[Short], e1: GR[Option[String]], e2: GR[Option[Boolean]]): GR[CountryRow] = GR{
+    prs => import prs._
+    CountryRow.tupled((<<[Short], <<?[String], <<?[Boolean], <<?[String], <<?[String]))
+  }
+  /** Table description of table country. Objects of this class serve as prototypes for rows in queries. */
+  class Country(_tableTag: Tag) extends Table[CountryRow](_tableTag, "country") {
+    def * = (id, code, allowed, currency, name) <> (CountryRow.tupled, CountryRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), code, allowed, currency, name).shaped.<>({r=>import r._; _1.map(_=> CountryRow.tupled((_1.get, _2, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(int2), PrimaryKey */
+    val id: Rep[Short] = column[Short]("id", O.PrimaryKey)
+    /** Database column code SqlType(varchar), Length(10,true), Default(None) */
+    val code: Rep[Option[String]] = column[Option[String]]("code", O.Length(10,varying=true), O.Default(None))
+    /** Database column allowed SqlType(bool), Default(None) */
+    val allowed: Rep[Option[Boolean]] = column[Option[Boolean]]("allowed", O.Default(None))
+    /** Database column currency SqlType(varchar), Length(3,true), Default(None) */
+    val currency: Rep[Option[String]] = column[Option[String]]("currency", O.Length(3,varying=true), O.Default(None))
+    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
+    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Country */
+  lazy val Country = new TableQuery(tag => new Country(tag))
 
   /** Entity class storing rows of table PlayEvolutions
    *  @param id Database column id SqlType(int4), PrimaryKey
