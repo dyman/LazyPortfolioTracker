@@ -4,7 +4,17 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET		/test							controllers.Application.test
+GET		/test						controllers.Application.test
+GET		/links						controllers.Application.links
+GET     /fbindex	                controllers.Application.facebookIndex()
+
+
+
+GET         /callback                         @org.pac4j.play.CallbackController.callback()
+POST        /callback                         @org.pac4j.play.CallbackController.callback()
+GET         /casProxyCallback                 @org.pac4j.play.CallbackController.callback()
+POST        /casProxyCallback                 @org.pac4j.play.CallbackController.callback()
+GET         /logout                           @org.pac4j.play.ApplicationLogoutController.logout()
 
 
 # Map static resources from the /public folder to the /assets URL path

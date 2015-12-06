@@ -14,9 +14,38 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Country.schema ++ PlayEvolutions.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Accounttypes.schema ++ Country.schema ++ PlayEvolutions.schema ++ User.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
+
+  /** Entity class storing rows of table Accounttypes
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
+   *  @param countryid Database column countryId SqlType(int2) */
+  case class AccounttypesRow(id: Int, name: Option[String] = None, countryid: Short)
+  /** GetResult implicit for fetching AccounttypesRow objects using plain SQL queries */
+  implicit def GetResultAccounttypesRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Short]): GR[AccounttypesRow] = GR{
+    prs => import prs._
+    AccounttypesRow.tupled((<<[Int], <<?[String], <<[Short]))
+  }
+  /** Table description of table accountTypes. Objects of this class serve as prototypes for rows in queries. */
+  class Accounttypes(_tableTag: Tag) extends Table[AccounttypesRow](_tableTag, "accountTypes") {
+    def * = (id, name, countryid) <> (AccounttypesRow.tupled, AccounttypesRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), name, Rep.Some(countryid)).shaped.<>({r=>import r._; _1.map(_=> AccounttypesRow.tupled((_1.get, _2, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
+    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+    /** Database column countryId SqlType(int2) */
+    val countryid: Rep[Short] = column[Short]("countryId")
+
+    /** Foreign key referencing Country (database name country_fkey) */
+    lazy val countryFk = foreignKey("country_fkey", countryid, Country)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+  }
+  /** Collection-like TableQuery object for table Accounttypes */
+  lazy val Accounttypes = new TableQuery(tag => new Accounttypes(tag))
 
   /** Entity class storing rows of table Country
    *  @param id Database column id SqlType(int2), PrimaryKey

@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, userName:String, items: Seq[Option[String]])(content: Html)
 
 <!DOCTYPE html>
 
@@ -17,6 +17,7 @@
 		
     </head>
     <body>     
+   
         
         		<!-- Wrapper -->
 			<div id="wrapper">
@@ -49,47 +50,13 @@
 					<section id="menu">
 
 						<!-- Search -->
-							<section>
-								<form class="search" method="get" action="#">
-									<input type="text" name="query" placeholder="Search" />
-								</form>
-							</section>
-						<!-- Actions -->
-							<section>
-								<ul class="actions vertical">
-									<li><a href="#" class="button big fit">Log In</a></li>
-								</ul>
-							</section>
-						<!-- Links -->
-							<section>
-								<ul class="links">
-									<li>
-										<a href="#">
-											<h3>My Portfolio</h3>
-											<p>@content</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Dolor sit amet</h3>
-											<p>Sed vitae justo condimentum</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Feugiat veroeros</h3>
-											<p>Phasellus sed ultricies mi congue</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Etiam sed consequat</h3>
-											<p>Porta lectus amet ultricies</p>
-										</a>
-									</li>
-								</ul>
-							</section>
-
+						<section>
+							<form class="search" method="get" action="#">
+								<input type="text" name="query" placeholder="Search" />
+							</form>
+						</section>
+						
+						@links(userName,items)
 						
 
 					</section>
