@@ -36,6 +36,8 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
 
     // OAuth
     val facebookClient = new FacebookClient(fbId, fbSecret)
+    facebookClient.setFields("id,email")
+    facebookClient.setScope("email")
     val twitterClient = new TwitterClient("HVSQGAw2XmiwcKOTvZFbQ", "FSiO9G9VRR4KCuksky0kgGuo8gAVndYymr4Nl7qc8AA")
     // HTTP
     val formClient = new FormClient(baseUrl + "/theForm", new SimpleTestUsernamePasswordAuthenticator())
@@ -84,6 +86,7 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     val config = new Config(clients)
     config.addAuthorizer("admin", new RequireAnyRoleAuthorizer("ROLE_ADMIN"))
     config.addAuthorizer("custom", new CustomAuthorizer)
+    
     bind(classOf[Config]).toInstance(config)
 
     // extra HTTP action handler

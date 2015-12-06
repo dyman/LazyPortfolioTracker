@@ -15,32 +15,75 @@ import org.pac4j.play.scala._
 import play.api.libs.json.Json
 import org.pac4j.play.java.RequiresAuthentication
 import play.Logger
+import play.mvc.Results.Redirect
 
 class Application extends Controller with Security[CommonProfile] {
 
-  def index = Action.async {
-    accountTypes.map(i => Ok(views.html.index("ok", "peti", i.map(x => x.name))))
+  def index = Action {
+    request =>
+      {
+        if (isAuthenticated(request))
+          Redirect("/user")          
+        else
+          Ok(views.html.index("not protected", "log in"))
+          
+      }
   }
 
-  def test = Action.async {
+  def user = RequiresAuthentication("FacebookClient") { profile =>
+    Action { request =>
+      {
+        logger.debug(profile.getEmail() + " tries to connect")
+        val user = getUser(profile.getEmail)
+        user.map { x => Logger.debug(x.foldLeft("ids: ")(_ + _.id)) }
 
-    countryNames.map(i =>
-      Ok(views.html.index("message","name", i.map(x => x.name))))
+        Ok(views.html.index("protected", profile.getEmail))
+      }
+    }
+  }
+
+  def getProfile(request: RequestHeader) = {
+    val webContext = new PlayWebContext(request, dataStore)
+    val profileManager = new ProfileManager[CommonProfile](webContext)
+
+    profileManager.get(true)
+  }
+  def isAuthenticated(request: RequestHeader) = {
+    val webContext = new PlayWebContext(request, dataStore)
+    val profileManager = new ProfileManager[CommonProfile](webContext)
+
+    profileManager.isAuthenticated()
+  }
+
+  //  def index = Action {
+  //    //getUserProfile(request)
+  //    Ok(views.html.index("portico", "Log in"))
+  //  }
+
+  //accountTypes.map(i => Ok(views.html.index("ok", "peti", i.map(x => x.name))))
+
+  def test = Action {
+
+    //countryNames.map(i =>
+    Ok(views.html.index("message", "name"))
 
   }
 
   def links = Action.async {
-    accountTypes.map(i => Ok(views.html.links("peti", i.map(x => x.name))))
+    accountTypes.map(i => Ok(views.html.links("peti")))
 
   }
-  
-    
-  def facebookIndex = RequiresAuthentication("FacebookClient") { profile =>
-    Action { request =>
-      Logger.debug(profile.getEmail() + " tries to connect")
-      Ok(views.html.protectedIndex(profile))
-    }
-  }
+
+//  def facebookIndex = RequiresAuthentication("FacebookClient") { profile =>
+//    Action { request =>
+//
+//      Logger.debug(profile.getEmail() + " tries to connect")
+//      val user = getUser(profile.getEmail)
+//      user.map { x => Logger.debug(x.foldLeft("ids: ")(_ + _.id)) }
+//
+//      Ok(views.html.index("portico protected", profile.getEmail))
+//    }
+//  }
 
 }
 

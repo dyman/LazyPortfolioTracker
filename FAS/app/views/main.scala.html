@@ -1,4 +1,4 @@
-@(title: String, userName:String, items: Seq[Option[String]])(content: Html)
+@(title: String, userName:String)(content: Html)
 
 <!DOCTYPE html>
 
@@ -56,7 +56,7 @@
 							</form>
 						</section>
 						
-						@links(userName,items)
+						@links(userName)
 						
 
 					</section>
