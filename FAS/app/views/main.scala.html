@@ -1,4 +1,4 @@
-@(title: String, userName:String)(content: Html)
+@(title: String, userName:String,loggedIn:Boolean)(content: Html)
 
 <!DOCTYPE html>
 
@@ -56,7 +56,7 @@
 							</form>
 						</section>
 						
-						@links(userName)
+						@links(userName,loggedIn)
 						
 
 					</section>

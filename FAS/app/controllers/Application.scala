@@ -22,11 +22,12 @@ class Application extends Controller with Security[CommonProfile] {
   def index = Action {
     request =>
       {
-        if (isAuthenticated(request))
-          Redirect("/user")          
-        else
-          Ok(views.html.index("not protected", "log in"))
-          
+        if (isAuthenticated(request)) {
+          val newSession = getOrCreateSessionId(request)
+          Redirect("/user").withSession(newSession)
+        } else
+          Ok(views.html.index("not protected", "log in", false))
+
       }
   }
 
@@ -37,7 +38,7 @@ class Application extends Controller with Security[CommonProfile] {
         val user = getUser(profile.getEmail)
         user.map { x => Logger.debug(x.foldLeft("ids: ")(_ + _.id)) }
 
-        Ok(views.html.index("protected", profile.getEmail))
+        Ok(views.html.index("protected", profile.getEmail, true))
       }
     }
   }
@@ -48,7 +49,7 @@ class Application extends Controller with Security[CommonProfile] {
 
     profileManager.get(true)
   }
-  def isAuthenticated(request: RequestHeader) = {
+  def isAuthenticated(request: RequestHeader): Boolean = {
     val webContext = new PlayWebContext(request, dataStore)
     val profileManager = new ProfileManager[CommonProfile](webContext)
 
@@ -65,25 +66,14 @@ class Application extends Controller with Security[CommonProfile] {
   def test = Action {
 
     //countryNames.map(i =>
-    Ok(views.html.index("message", "name"))
+    Ok(views.html.index("message", "name",false))
 
   }
 
   def links = Action.async {
-    accountTypes.map(i => Ok(views.html.links("peti")))
+    accountTypes.map(i => Ok(views.html.links("peti",false)))
 
   }
-
-//  def facebookIndex = RequiresAuthentication("FacebookClient") { profile =>
-//    Action { request =>
-//
-//      Logger.debug(profile.getEmail() + " tries to connect")
-//      val user = getUser(profile.getEmail)
-//      user.map { x => Logger.debug(x.foldLeft("ids: ")(_ + _.id)) }
-//
-//      Ok(views.html.index("portico protected", profile.getEmail))
-//    }
-//  }
 
 }
 
