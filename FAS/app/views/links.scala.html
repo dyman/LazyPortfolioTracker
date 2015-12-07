@@ -1,12 +1,17 @@
-@(userName:String,loggedIn: Boolean)
+@(email:String,loggedIn: Boolean)
 <!-- Actions -->
 <section>
-	<ul class="actions vertical">
-		<li><a href="/user" class="button big fit">@userName</a></li>
-	</ul>
+	
 	@if(loggedIn){
 	<ul class="actions vertical">
+		<li><a href="/user" class="button big fit">@email</a></li>
+	</ul>
+	<ul class="actions vertical">
 		<li><a href="/logout?url=/" class="button big fit">logout</a></li>
+	</ul>
+	}else{
+	<ul class="actions vertical">
+		<li><a href="/user" class="fit"><img src="@routes.Assets.versioned("images/fb.png")" alt="" /></a></li>
 	</ul>
 	}
 </section>

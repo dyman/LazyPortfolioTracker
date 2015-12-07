@@ -32,56 +32,27 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     val fbId = configuration.getString("fbId").get
     val fbSecret = configuration.getString("fbSecret").get
     val baseUrl = configuration.getString("baseUrl").get
-    val casUrl = configuration.getString("casUrl").get
-
+    
     // OAuth
     val facebookClient = new FacebookClient(fbId, fbSecret)
     facebookClient.setFields("id,email")
     facebookClient.setScope("email")
-    val twitterClient = new TwitterClient("HVSQGAw2XmiwcKOTvZFbQ", "FSiO9G9VRR4KCuksky0kgGuo8gAVndYymr4Nl7qc8AA")
+    //val twitterClient = new TwitterClient("HVSQGAw2XmiwcKOTvZFbQ", "FSiO9G9VRR4KCuksky0kgGuo8gAVndYymr4Nl7qc8AA")
     // HTTP
     val formClient = new FormClient(baseUrl + "/theForm", new SimpleTestUsernamePasswordAuthenticator())
     val indirectBasicAuthClient = new IndirectBasicAuthClient(new SimpleTestUsernamePasswordAuthenticator())
 
     val playCacheStore = new PlayCacheStore()
-    // for test purposes: profile timeout = 60 seconds
+        // for test purposes: profile timeout = 60 seconds
     //cacheStore.setProfileTimeout(60)
-    bind(classOf[DataStore]).toInstance(playCacheStore)
+    bind(classOf[DataStore]).toInstance(playCacheStore) 
 
-    // CAS
-    val casClient = new CasClient()
-    casClient.setLogoutHandler(new PlayCacheLogoutHandler(playCacheStore))
-    casClient.setCasProtocol(CasProtocol.CAS20);
-    // casClient.setGateway(true)
-    /*val casProxyReceptor = new CasProxyReceptor()
-    casProxyReceptor.setCallbackUrl("http://localhost:9000/casProxyCallback")
-    casClient.setCasProxyReceptor(casProxyReceptor)*/
-    casClient.setCasLoginUrl(casUrl)
-
-    // SAML
-    val cfg = new SAML2ClientConfiguration("resource:samlKeystore.jks", "pac4j-demo-passwd", "pac4j-demo-passwd", "resource:openidp-feide.xml")
-    cfg.setMaximumAuthenticationLifetime(3600)
-    cfg.setServiceProviderEntityId("urn:mace:saml:pac4j.org")
-    cfg.setServiceProviderMetadataPath(new File("target", "sp-metadata.xml").getAbsolutePath())
-    val saml2Client = new SAML2Client(cfg)
-
-    // OpenID Connect
-    val oidcClient = new OidcClient()
-    oidcClient.setClientID("343992089165-i1es0qvej18asl33mvlbeq750i3ko32k.apps.googleusercontent.com")
-    oidcClient.setSecret("unXK_RSCbCXLTic2JACTiAo9")
-    oidcClient.setDiscoveryURI("https://accounts.google.com/.well-known/openid-configuration")
-    oidcClient.addCustomParam("prompt", "consent")
-
-    // REST authent with JWT for a token passed in the url as the token parameter
-    val parameterClient = new ParameterClient("token", new JwtAuthenticator("12345678901234567890123456789012"))
-    parameterClient.setSupportGetRequest(true)
-    parameterClient.setSupportPostRequest(false)
-
+   
     // basic auth
     val directBasicAuthClient = new DirectBasicAuthClient(new SimpleTestUsernamePasswordAuthenticator)
 
-    val clients = new Clients(baseUrl + "/callback", facebookClient, twitterClient, formClient,
-      indirectBasicAuthClient, casClient, saml2Client, oidcClient, parameterClient, directBasicAuthClient) // , casProxyReceptor);
+    val clients = new Clients(baseUrl + "/callback", facebookClient,  formClient,
+      indirectBasicAuthClient, directBasicAuthClient)
 
     val config = new Config(clients)
     config.addAuthorizer("admin", new RequireAnyRoleAuthorizer("ROLE_ADMIN"))
