@@ -1,6 +1,7 @@
 package controllers
 
 import models.db.defaultDb._
+import scala.util.Random
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.Action
 import play.api.mvc.Controller
@@ -25,8 +26,10 @@ class Application extends Controller with Security[CommonProfile] {
         if (isAuthenticated(request)) {
           val newSession = getOrCreateSessionId(request)
           Redirect("/user").withSession(newSession)
-        } else
+        } else {
+          // val t = Random.shuffle(getQuotes).head
           Ok(views.html.index("not protected", "log in", false))
+        }
 
       }
   }
@@ -56,23 +59,22 @@ class Application extends Controller with Security[CommonProfile] {
     profileManager.isAuthenticated()
   }
 
-  //  def index = Action {
-  //    //getUserProfile(request)
-  //    Ok(views.html.index("portico", "Log in"))
-  //  }
-
   //accountTypes.map(i => Ok(views.html.index("ok", "peti", i.map(x => x.name))))
 
   def test = Action {
 
     //countryNames.map(i =>
-    Ok(views.html.index("message", "name",false))
+    Ok(views.html.index("message", "name", false))
 
   }
 
   def links = Action.async {
-    accountTypes.map(i => Ok(views.html.links("peti",false)))
+    accountTypes.map(i => Ok(views.html.links("peti", false)))
 
+  }
+
+  def quote = Action.async {
+    getCachesQuotes.map(i => Ok(views.html.quote(Random.shuffle(i.toList).head)))
   }
 
 }

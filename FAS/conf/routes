@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET 	/user						controllers.Application.user
 GET		/test						controllers.Application.test
 GET		/links						controllers.Application.links
+GET		/quote						controllers.Application.quote
 
 
 
