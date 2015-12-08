@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Accounttypes.schema ++ Country.schema ++ PlayEvolutions.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Accounttypes.schema ++ Country.schema ++ PlayEvolutions.schema ++ Quotes.schema ++ User.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -116,6 +116,32 @@ trait Tables {
   }
   /** Collection-like TableQuery object for table PlayEvolutions */
   lazy val PlayEvolutions = new TableQuery(tag => new PlayEvolutions(tag))
+
+  /** Entity class storing rows of table Quotes
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param quote Database column quote SqlType(text), Default(None)
+   *  @param author Database column author SqlType(varchar), Length(255,true), Default(None) */
+  case class QuotesRow(id: Int, quote: Option[String] = None, author: Option[String] = None)
+  /** GetResult implicit for fetching QuotesRow objects using plain SQL queries */
+  implicit def GetResultQuotesRow(implicit e0: GR[Int], e1: GR[Option[String]]): GR[QuotesRow] = GR{
+    prs => import prs._
+    QuotesRow.tupled((<<[Int], <<?[String], <<?[String]))
+  }
+  /** Table description of table quotes. Objects of this class serve as prototypes for rows in queries. */
+  class Quotes(_tableTag: Tag) extends Table[QuotesRow](_tableTag, "quotes") {
+    def * = (id, quote, author) <> (QuotesRow.tupled, QuotesRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), quote, author).shaped.<>({r=>import r._; _1.map(_=> QuotesRow.tupled((_1.get, _2, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column quote SqlType(text), Default(None) */
+    val quote: Rep[Option[String]] = column[Option[String]]("quote", O.Default(None))
+    /** Database column author SqlType(varchar), Length(255,true), Default(None) */
+    val author: Rep[Option[String]] = column[Option[String]]("author", O.Length(255,varying=true), O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Quotes */
+  lazy val Quotes = new TableQuery(tag => new Quotes(tag))
 
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
