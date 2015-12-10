@@ -1,4 +1,4 @@
-name := """FAS"""
+name := """LPT"""
 
 version := "1.0-SNAPSHOT"
 
