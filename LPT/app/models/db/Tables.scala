@@ -14,70 +14,93 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Accounttypes.schema ++ Country.schema ++ PlayEvolutions.schema ++ Quotes.schema ++ User.schema
+  lazy val schema: profile.SchemaDescription = Array(Accounttype.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
-  /** Entity class storing rows of table Accounttypes
+  /** Entity class storing rows of table Accounttype
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
-   *  @param countryid Database column countryId SqlType(int2) */
-  case class AccounttypesRow(id: Int, name: Option[String] = None, countryid: Short)
-  /** GetResult implicit for fetching AccounttypesRow objects using plain SQL queries */
-  implicit def GetResultAccounttypesRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Short]): GR[AccounttypesRow] = GR{
+   *  @param countryid Database column countryid SqlType(int2) */
+  case class AccounttypeRow(id: Int, name: Option[String] = None, countryid: Short)
+  /** GetResult implicit for fetching AccounttypeRow objects using plain SQL queries */
+  implicit def GetResultAccounttypeRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Short]): GR[AccounttypeRow] = GR{
     prs => import prs._
-    AccounttypesRow.tupled((<<[Int], <<?[String], <<[Short]))
+    AccounttypeRow.tupled((<<[Int], <<?[String], <<[Short]))
   }
-  /** Table description of table accountTypes. Objects of this class serve as prototypes for rows in queries. */
-  class Accounttypes(_tableTag: Tag) extends Table[AccounttypesRow](_tableTag, "accountTypes") {
-    def * = (id, name, countryid) <> (AccounttypesRow.tupled, AccounttypesRow.unapply)
+  /** Table description of table accounttype. Objects of this class serve as prototypes for rows in queries. */
+  class Accounttype(_tableTag: Tag) extends Table[AccounttypeRow](_tableTag, "accounttype") {
+    def * = (id, name, countryid) <> (AccounttypeRow.tupled, AccounttypeRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), name, Rep.Some(countryid)).shaped.<>({r=>import r._; _1.map(_=> AccounttypesRow.tupled((_1.get, _2, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), name, Rep.Some(countryid)).shaped.<>({r=>import r._; _1.map(_=> AccounttypeRow.tupled((_1.get, _2, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column name SqlType(varchar), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
-    /** Database column countryId SqlType(int2) */
-    val countryid: Rep[Short] = column[Short]("countryId")
+    /** Database column countryid SqlType(int2) */
+    val countryid: Rep[Short] = column[Short]("countryid")
 
     /** Foreign key referencing Country (database name country_fkey) */
     lazy val countryFk = foreignKey("country_fkey", countryid, Country)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
-  /** Collection-like TableQuery object for table Accounttypes */
-  lazy val Accounttypes = new TableQuery(tag => new Accounttypes(tag))
+  /** Collection-like TableQuery object for table Accounttype */
+  lazy val Accounttype = new TableQuery(tag => new Accounttype(tag))
 
   /** Entity class storing rows of table Country
    *  @param id Database column id SqlType(int2), PrimaryKey
    *  @param code Database column code SqlType(varchar), Length(10,true), Default(None)
-   *  @param allowed Database column allowed SqlType(bool), Default(None)
    *  @param currency Database column currency SqlType(varchar), Length(3,true), Default(None)
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None) */
-  case class CountryRow(id: Short, code: Option[String] = None, allowed: Option[Boolean] = None, currency: Option[String] = None, name: Option[String] = None)
+  case class CountryRow(id: Short, code: Option[String] = None, currency: Option[String] = None, name: Option[String] = None)
   /** GetResult implicit for fetching CountryRow objects using plain SQL queries */
-  implicit def GetResultCountryRow(implicit e0: GR[Short], e1: GR[Option[String]], e2: GR[Option[Boolean]]): GR[CountryRow] = GR{
+  implicit def GetResultCountryRow(implicit e0: GR[Short], e1: GR[Option[String]]): GR[CountryRow] = GR{
     prs => import prs._
-    CountryRow.tupled((<<[Short], <<?[String], <<?[Boolean], <<?[String], <<?[String]))
+    CountryRow.tupled((<<[Short], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table country. Objects of this class serve as prototypes for rows in queries. */
   class Country(_tableTag: Tag) extends Table[CountryRow](_tableTag, "country") {
-    def * = (id, code, allowed, currency, name) <> (CountryRow.tupled, CountryRow.unapply)
+    def * = (id, code, currency, name) <> (CountryRow.tupled, CountryRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), code, allowed, currency, name).shaped.<>({r=>import r._; _1.map(_=> CountryRow.tupled((_1.get, _2, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), code, currency, name).shaped.<>({r=>import r._; _1.map(_=> CountryRow.tupled((_1.get, _2, _3, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(int2), PrimaryKey */
     val id: Rep[Short] = column[Short]("id", O.PrimaryKey)
     /** Database column code SqlType(varchar), Length(10,true), Default(None) */
     val code: Rep[Option[String]] = column[Option[String]]("code", O.Length(10,varying=true), O.Default(None))
-    /** Database column allowed SqlType(bool), Default(None) */
-    val allowed: Rep[Option[Boolean]] = column[Option[Boolean]]("allowed", O.Default(None))
     /** Database column currency SqlType(varchar), Length(3,true), Default(None) */
     val currency: Rep[Option[String]] = column[Option[String]]("currency", O.Length(3,varying=true), O.Default(None))
     /** Database column name SqlType(varchar), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+
+    /** Foreign key referencing Currency (database name currency_id) */
+    lazy val currencyFk = foreignKey("currency_id", currency, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
   /** Collection-like TableQuery object for table Country */
   lazy val Country = new TableQuery(tag => new Country(tag))
+
+  /** Entity class storing rows of table Currency
+   *  @param id Database column id SqlType(varchar), PrimaryKey, Length(3,true)
+   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None) */
+  case class CurrencyRow(id: String, name: Option[String] = None)
+  /** GetResult implicit for fetching CurrencyRow objects using plain SQL queries */
+  implicit def GetResultCurrencyRow(implicit e0: GR[String], e1: GR[Option[String]]): GR[CurrencyRow] = GR{
+    prs => import prs._
+    CurrencyRow.tupled((<<[String], <<?[String]))
+  }
+  /** Table description of table currency. Objects of this class serve as prototypes for rows in queries. */
+  class Currency(_tableTag: Tag) extends Table[CurrencyRow](_tableTag, "currency") {
+    def * = (id, name) <> (CurrencyRow.tupled, CurrencyRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), name).shaped.<>({r=>import r._; _1.map(_=> CurrencyRow.tupled((_1.get, _2)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(varchar), PrimaryKey, Length(3,true) */
+    val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(3,varying=true))
+    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
+    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Currency */
+  lazy val Currency = new TableQuery(tag => new Currency(tag))
 
   /** Entity class storing rows of table PlayEvolutions
    *  @param id Database column id SqlType(int4), PrimaryKey
@@ -117,58 +140,55 @@ trait Tables {
   /** Collection-like TableQuery object for table PlayEvolutions */
   lazy val PlayEvolutions = new TableQuery(tag => new PlayEvolutions(tag))
 
-  /** Entity class storing rows of table Quotes
+  /** Entity class storing rows of table Quote
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
-   *  @param quote Database column quote SqlType(text), Default(None)
-   *  @param author Database column author SqlType(varchar), Length(255,true), Default(None) */
-  case class QuotesRow(id: Int, quote: Option[String] = None, author: Option[String] = None)
-  /** GetResult implicit for fetching QuotesRow objects using plain SQL queries */
-  implicit def GetResultQuotesRow(implicit e0: GR[Int], e1: GR[Option[String]]): GR[QuotesRow] = GR{
+   *  @param quote Database column quote SqlType(text)
+   *  @param author Database column author SqlType(varchar), Length(255,true) */
+  case class QuoteRow(id: Int, quote: String, author: String)
+  /** GetResult implicit for fetching QuoteRow objects using plain SQL queries */
+  implicit def GetResultQuoteRow(implicit e0: GR[Int], e1: GR[String]): GR[QuoteRow] = GR{
     prs => import prs._
-    QuotesRow.tupled((<<[Int], <<?[String], <<?[String]))
+    QuoteRow.tupled((<<[Int], <<[String], <<[String]))
   }
-  /** Table description of table quotes. Objects of this class serve as prototypes for rows in queries. */
-  class Quotes(_tableTag: Tag) extends Table[QuotesRow](_tableTag, "quotes") {
-    def * = (id, quote, author) <> (QuotesRow.tupled, QuotesRow.unapply)
+  /** Table description of table quote. Objects of this class serve as prototypes for rows in queries. */
+  class Quote(_tableTag: Tag) extends Table[QuoteRow](_tableTag, "quote") {
+    def * = (id, quote, author) <> (QuoteRow.tupled, QuoteRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), quote, author).shaped.<>({r=>import r._; _1.map(_=> QuotesRow.tupled((_1.get, _2, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(quote), Rep.Some(author)).shaped.<>({r=>import r._; _1.map(_=> QuoteRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
-    /** Database column quote SqlType(text), Default(None) */
-    val quote: Rep[Option[String]] = column[Option[String]]("quote", O.Default(None))
-    /** Database column author SqlType(varchar), Length(255,true), Default(None) */
-    val author: Rep[Option[String]] = column[Option[String]]("author", O.Length(255,varying=true), O.Default(None))
+    /** Database column quote SqlType(text) */
+    val quote: Rep[String] = column[String]("quote")
+    /** Database column author SqlType(varchar), Length(255,true) */
+    val author: Rep[String] = column[String]("author", O.Length(255,varying=true))
   }
-  /** Collection-like TableQuery object for table Quotes */
-  lazy val Quotes = new TableQuery(tag => new Quotes(tag))
+  /** Collection-like TableQuery object for table Quote */
+  lazy val Quote = new TableQuery(tag => new Quote(tag))
 
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param email Database column email SqlType(varchar), Length(255,true)
-   *  @param password Database column password SqlType(varchar), Length(255,true), Default(None)
-   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
+   *  @param lastactivity Database column lastactivity SqlType(date)
    *  @param isadmin Database column isadmin SqlType(bool), Default(None) */
-  case class UserRow(id: Int, email: String, password: Option[String] = None, name: Option[String] = None, isadmin: Option[Boolean] = None)
+  case class UserRow(id: Int, email: String, lastactivity: java.sql.Date, isadmin: Option[Boolean] = None)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
-  implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String], e2: GR[Option[String]], e3: GR[Option[Boolean]]): GR[UserRow] = GR{
+  implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Date], e3: GR[Option[Boolean]]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<[String], <<?[String], <<?[String], <<?[Boolean]))
+    UserRow.tupled((<<[Int], <<[String], <<[java.sql.Date], <<?[Boolean]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
-    def * = (id, email, password, name, isadmin) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, email, lastactivity, isadmin) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(email), password, name, isadmin).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2.get, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(email), Rep.Some(lastactivity), isadmin).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2.get, _3.get, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column email SqlType(varchar), Length(255,true) */
     val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
-    /** Database column password SqlType(varchar), Length(255,true), Default(None) */
-    val password: Rep[Option[String]] = column[Option[String]]("password", O.Length(255,varying=true), O.Default(None))
-    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
-    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+    /** Database column lastactivity SqlType(date) */
+    val lastactivity: Rep[java.sql.Date] = column[java.sql.Date]("lastactivity")
     /** Database column isadmin SqlType(bool), Default(None) */
     val isadmin: Rep[Option[Boolean]] = column[Option[Boolean]]("isadmin", O.Default(None))
   }

@@ -27,7 +27,7 @@ class Application extends Controller with Security[CommonProfile] {
           val newSession = getOrCreateSessionId(request)
           Redirect("/user").withSession(newSession)
         } else {
-          // val t = Random.shuffle(getQuotes).head
+          
           Ok(views.html.index("not protected", "log in", false))
         }
 
