@@ -38,7 +38,8 @@ INSERT INTO currency (id, name) VALUES ('PHP', 'Philippine peso');
 INSERT INTO currency (id, name) VALUES ('SGD', 'Singapore dollar');
 INSERT INTO currency (id, name) VALUES ('THB', 'Thai baht');
 INSERT INTO currency (id, name) VALUES ('ZAR', 'South African rand');
-INSERT INTO currency (id, name) VALUES ('ISK', 'Icelandic krona ');
+INSERT INTO currency (id, name) VALUES ('ISK', 'Icelandic krona');
+INSERT INTO currency (id, name) VALUES ('EUR', 'Euro');
 
 
 
