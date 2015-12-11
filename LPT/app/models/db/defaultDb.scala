@@ -3,9 +3,9 @@ import slick.driver.PostgresDriver.api._
 import models.db.Tables.Country
 import play.Logger
 import models.db.Tables.User
-import models.db.Tables.Quotes
+import models.db.Tables.Quote
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import models.db.Tables.QuotesRow
+import models.db.Tables.QuoteRow
 import play.cache.Cache
 import scala.concurrent.Future
 import models.db.Tables.Accounttype
@@ -32,46 +32,46 @@ object defaultDb {
     val users = for (u <- User) yield u
     val u = users.filter { _.email === email }
     db.run(u.result)
-//    val t = db.run(u.result)
-//    val today = DateTime.now()
-//    t.onSuccess {
-//      case ret => {
-//        if (ret.size == 1) ret else users +=
-//          (None,
-//            email,
-//            new java.sql.Date(today.year().get, today.monthOfYear().get(), today.dayOfMonth().get()),
-//            false,
-//            1)
-//      }
-//    }
+    //    val t = db.run(u.result)
+    //    val today = DateTime.now()
+    //    t.onSuccess {
+    //      case ret => {
+    //        if (ret.size == 1) ret else users +=
+    //          (None,
+    //            email,
+    //            new java.sql.Date(today.year().get, today.monthOfYear().get(), today.dayOfMonth().get()),
+    //            false,
+    //            1)
+    //      }
+    //    }
 
   }
 
   def getQuotes = {
     Logger.debug("get quotes")
-    val qus = for (q <- Quotes) yield q
+    val qus = for (q <- Quote) yield q
     val f = db.run(qus.result)
     f
   }
 
-  def getCachesQuotes: Future[Seq[Tables.QuotesRow]] = {
+  def getCachesQuotes: Future[Seq[Tables.QuoteRow]] = {
     Logger.debug("get cached quotes")
     if (Cache.get("quotes") == null) {
       Logger.debug("querying db")
-      val qus = for (q <- Quotes) yield q
+      val qus = for (q <- Quote) yield q
       val f = db.run(qus.result)
       f.onSuccess { case ret => Cache.set("quotes", ret) }
       f
     } else {
       Logger.debug("querying cache")
       Future {
-        Cache.get("quotes").asInstanceOf[Seq[Tables.QuotesRow]]
+        Cache.get("quotes").asInstanceOf[Seq[Tables.QuoteRow]]
       }
     }
 
   }
 
-//  def findOrSaveUser(): Int = {
-//
-//  }
+  //  def findOrSaveUser(): Int = {
+  //
+  //  }
 }
