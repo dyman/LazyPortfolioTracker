@@ -62,11 +62,7 @@ CREATE TABLE "user"
   email character varying(255) NOT NULL,
   lastactivity date NOT NULL,
   isadmin boolean,
-  countryid smallint not null,
-  CONSTRAINT user_pkey PRIMARY KEY (id),
-  CONSTRAINT country_id FOREIGN KEY (countryid)
-      REFERENCES country (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT user_pkey PRIMARY KEY (id)
 );
 
 # --- !Downs
