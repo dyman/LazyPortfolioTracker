@@ -61,9 +61,10 @@ CREATE TABLE "user"
 (
   id serial NOT NULL,
   email character varying(255) NOT NULL,
-  lastactivity date NOT NULL,
+  lastactivity timestamp without time zone NOT NULL,
   isadmin boolean,
-  CONSTRAINT user_pkey PRIMARY KEY (id)
+  CONSTRAINT user_pkey PRIMARY KEY (id),
+  CONSTRAINT email_uniqe UNIQUE (email)
 );
 
 CREATE TABLE "accounttype"

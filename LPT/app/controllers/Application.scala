@@ -18,7 +18,7 @@ import org.pac4j.play.java.RequiresAuthentication
 import play.Logger
 import play.mvc.Results.Redirect
 
-class Application extends Controller with Security[CommonProfile] {
+class Application extends Controller with LazyPortfolio {
 
   def index = Action {
     request =>
@@ -27,7 +27,7 @@ class Application extends Controller with Security[CommonProfile] {
           val newSession = getOrCreateSessionId(request)
           Redirect("/user").withSession(newSession)
         } else {
-          
+
           Ok(views.html.index("not protected", "log in", false))
         }
 
@@ -37,29 +37,13 @@ class Application extends Controller with Security[CommonProfile] {
   def user = RequiresAuthentication("FacebookClient") { profile =>
     Action { request =>
       {
-        logger.debug(profile.getEmail() + " tries to connect")
-        val user = getUser(profile.getEmail)
-        user.map { x => Logger.debug(x.foldLeft("ids: ")(_ + _.id)) }
+        Logger.debug("authenticated user: " + {} + " tries to connect", profile.getEmail())
+        val userId = loginAndSaveUser(profile.getEmail)
 
         Ok(views.html.index("protected", profile.getEmail, true))
       }
     }
   }
-
-  def getProfile(request: RequestHeader) = {
-    val webContext = new PlayWebContext(request, dataStore)
-    val profileManager = new ProfileManager[CommonProfile](webContext)
-
-    profileManager.get(true)
-  }
-  def isAuthenticated(request: RequestHeader): Boolean = {
-    val webContext = new PlayWebContext(request, dataStore)
-    val profileManager = new ProfileManager[CommonProfile](webContext)
-
-    profileManager.isAuthenticated()
-  }
-
-  //accountTypes.map(i => Ok(views.html.index("ok", "peti", i.map(x => x.name))))
 
   def test = Action {
 

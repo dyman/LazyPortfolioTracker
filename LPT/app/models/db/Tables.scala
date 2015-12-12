@@ -169,13 +169,13 @@ trait Tables {
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param email Database column email SqlType(varchar), Length(255,true)
-   *  @param lastactivity Database column lastactivity SqlType(date)
+   *  @param lastactivity Database column lastactivity SqlType(timestamp)
    *  @param isadmin Database column isadmin SqlType(bool), Default(None) */
-  case class UserRow(id: Int, email: String, lastactivity: java.sql.Date, isadmin: Option[Boolean] = None)
+  case class UserRow(id: Int, email: String, lastactivity: java.sql.Timestamp, isadmin: Option[Boolean] = None)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
-  implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Date], e3: GR[Option[Boolean]]): GR[UserRow] = GR{
+  implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Timestamp], e3: GR[Option[Boolean]]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<[String], <<[java.sql.Date], <<?[Boolean]))
+    UserRow.tupled((<<[Int], <<[String], <<[java.sql.Timestamp], <<?[Boolean]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
@@ -187,10 +187,13 @@ trait Tables {
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column email SqlType(varchar), Length(255,true) */
     val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
-    /** Database column lastactivity SqlType(date) */
-    val lastactivity: Rep[java.sql.Date] = column[java.sql.Date]("lastactivity")
+    /** Database column lastactivity SqlType(timestamp) */
+    val lastactivity: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("lastactivity")
     /** Database column isadmin SqlType(bool), Default(None) */
     val isadmin: Rep[Option[Boolean]] = column[Option[Boolean]]("isadmin", O.Default(None))
+
+    /** Uniqueness Index over (email) (database name email_uniqe) */
+    val index1 = index("email_uniqe", email, unique=true)
   }
   /** Collection-like TableQuery object for table User */
   lazy val User = new TableQuery(tag => new User(tag))
