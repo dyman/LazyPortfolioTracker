@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Array(Accounttype.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, User.schema).reduceLeft(_ ++ _)
+  lazy val schema: profile.SchemaDescription = Array(Accounttype.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -165,6 +165,38 @@ trait Tables {
   }
   /** Collection-like TableQuery object for table Quote */
   lazy val Quote = new TableQuery(tag => new Quote(tag))
+
+  /** Entity class storing rows of table Rate
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param currencyid Database column currencyid SqlType(varchar), Length(3,true), Default(None)
+   *  @param ondate Database column ondate SqlType(date), Default(None)
+   *  @param rate Database column rate SqlType(money), Default(None) */
+  case class RateRow(id: Int, currencyid: Option[String] = None, ondate: Option[java.sql.Date] = None, rate: Option[Double] = None)
+  /** GetResult implicit for fetching RateRow objects using plain SQL queries */
+  implicit def GetResultRateRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[java.sql.Date]], e3: GR[Option[Double]]): GR[RateRow] = GR{
+    prs => import prs._
+    RateRow.tupled((<<[Int], <<?[String], <<?[java.sql.Date], <<?[Double]))
+  }
+  /** Table description of table rate. Objects of this class serve as prototypes for rows in queries. */
+  class Rate(_tableTag: Tag) extends Table[RateRow](_tableTag, "rate") {
+    def * = (id, currencyid, ondate, rate) <> (RateRow.tupled, RateRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), currencyid, ondate, rate).shaped.<>({r=>import r._; _1.map(_=> RateRow.tupled((_1.get, _2, _3, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column currencyid SqlType(varchar), Length(3,true), Default(None) */
+    val currencyid: Rep[Option[String]] = column[Option[String]]("currencyid", O.Length(3,varying=true), O.Default(None))
+    /** Database column ondate SqlType(date), Default(None) */
+    val ondate: Rep[Option[java.sql.Date]] = column[Option[java.sql.Date]]("ondate", O.Default(None))
+    /** Database column rate SqlType(money), Default(None) */
+    val rate: Rep[Option[Double]] = column[Option[Double]]("rate", O.Default(None))
+
+    /** Foreign key referencing Currency (database name rate_currencyid_fkey) */
+    lazy val currencyFk = foreignKey("rate_currencyid_fkey", currencyid, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+  }
+  /** Collection-like TableQuery object for table Rate */
+  lazy val Rate = new TableQuery(tag => new Rate(tag))
 
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey

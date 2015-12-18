@@ -14,8 +14,14 @@ import models.db.Tables.UserRow
 import models.db.Tables.UserRow
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import models.db.Tables.RateRow
+import models.db.Tables.Rate
+import scala.util.Success
+import scala.util.Failure
 
 object defaultDb {
+
+  def myDb = Database.forConfig("mydb")
 
   def countryNames = {
     val db = Database.forConfig("mydb")
@@ -39,43 +45,44 @@ object defaultDb {
     }
   }
 
-  def loginAndSaveUser(email: String): Unit = {
-    val db = Database.forConfig("mydb")
-    try {
-      Logger.debug("getting user: {}", email)
-      val users = for (u <- User) yield u
-      val u = users.filter { _.email === email }
-      db.run(u.result)
-      val t = db.run(u.result)
-
-      t.onSuccess {
-        case ret => {
-          if (ret.size > 0) {
-            val in = ret.head
-            Logger.debug("user found id is: {}", in.id.toString())
-            val today = new java.sql.Timestamp(DateTime.now().getMillis)
-            val userQueries: TableQuery[User] = TableQuery[User]
-            val newIn: UserRow = new UserRow(in.id, email, today, Some(false))
-            val updateAction: DBIO[Int] = userQueries.insertOrUpdate(newIn)
-            Logger.debug(updateAction.toString())
-            Future {
-              in.id
-            }
-          } else if (ret.size == 0) {
-            Logger.debug("user not found, inserting")
-            val today = new java.sql.Timestamp(DateTime.now().getMillis)
-            val userQueries: TableQuery[User] = TableQuery[User]
-            val in: UserRow = new UserRow(100, email, today, Some(false))
-            val insertAction: DBIO[Int] = (userQueries returning userQueries.map(x => x.id)) += in
-            val result: Future[Int] = db.run(insertAction)
-            result
+  def loginAndSaveUser(email: String): Future[Int] = {
+    Logger.debug("getting user: {}", email)
+    val users = for (u <- User) yield u
+    val u = users.filter { _.email === email }
+    val t = myDb.run(u.result)
+    var rt: Future[Int] = null
+    t.onComplete({
+      case Success(ret) => {
+        val u = ret.headOption
+        if (!u.isDefined) {
+          val in = u.get
+          Logger.debug("user found id is: {}", in.id.toString())
+          val today = new java.sql.Timestamp(DateTime.now().getMillis)
+          val userQueries: TableQuery[User] = TableQuery[User]
+          val newIn: UserRow = new UserRow(in.id, email, today, Some(false))
+          val updateAction: DBIO[Int] = userQueries.insertOrUpdate(newIn)
+          Logger.debug(updateAction.toString())
+          rt = Future {
+            in.id
           }
+        } else {
+          Logger.debug("user not found, inserting")
+          val today = new java.sql.Timestamp(DateTime.now().getMillis)
+          val userQueries: TableQuery[User] = TableQuery[User]
+          val in: UserRow = new UserRow(100, email, today, Some(false))
+          val insertAction: DBIO[Int] = (userQueries returning userQueries.map(x => x.id)) += in
+          rt = myDb.run(insertAction)
         }
       }
+      case Failure(exception) => {
+        rt = Future {
+          0
+        }
+      }
+    })
 
-    } finally {
-      //db.close()
-    }
+    rt
+
   }
 
   def getQuotes = {
@@ -97,6 +104,7 @@ object defaultDb {
       try {
         Logger.debug("querying db")
         val qus = for (q <- Quote) yield q
+
         val f = db.run(qus.result)
         f.onSuccess { case ret => Cache.set("quotes", ret) }
         f
@@ -110,6 +118,31 @@ object defaultDb {
       }
     }
 
+  }
+
+  def ratesIsEmpty() = {    
+    val rates: TableQuery[Rate] = TableQuery[Rate] 
+    !Await.result(myDb.run(rates.exists.result),Duration.Inf)    
+  }
+
+  ////rates
+  def saveRates(newRates: List[RateRow]) = {
+    Logger.debug("saving rates: " + newRates.mkString(","))
+    val insertQuery: TableQuery[Rate] = TableQuery[Rate]
+    val insertAction = insertQuery ++= newRates //*insertQuery returning insertQuery.map(x => x.id))
+
+    val t = myDb.run(insertAction)
+    t.onSuccess {
+      case ret => {
+        Logger.debug("rateId: {}", ret.toString())
+      }
+    }
+    t.onFailure {
+      case ret => {
+        Logger.debug("rateFailure: {}", ret.toString())
+      }
+    }
+    t
   }
 
 }

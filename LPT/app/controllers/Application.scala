@@ -37,7 +37,7 @@ class Application extends Controller with LazyPortfolio {
   def user = RequiresAuthentication("FacebookClient") { profile =>
     Action { request =>
       {
-        Logger.debug("authenticated user: " + {} + " tries to connect", profile.getEmail())
+        Logger.debug("authenticated user: " + profile.getEmail + " tries to connect")
         val userId = loginAndSaveUser(profile.getEmail)
 
         Ok(views.html.index("protected", profile.getEmail, true))

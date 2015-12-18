@@ -42,6 +42,17 @@ INSERT INTO currency (id, name) VALUES ('ISK', 'Icelandic krona');
 INSERT INTO currency (id, name) VALUES ('EUR', 'Euro');
 
 
+CREATE TABLE rate
+(
+  id serial NOT NULL,
+  currencyid character varying(3),
+  ondate date,
+  rate numeric,
+  CONSTRAINT rate_pkey PRIMARY KEY (id),
+  CONSTRAINT rate_currencyid_fkey FOREIGN KEY (currencyid)
+      REFERENCES currency (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
 
 CREATE TABLE "country"
 (
@@ -82,5 +93,6 @@ CREATE TABLE "accounttype"
 DROP TABLE "accounttype";
 DROP TABLE "user";
 DROP TABLE "country";
+DROP TABLE "rate";
 DROP TABLE "currency";
 
