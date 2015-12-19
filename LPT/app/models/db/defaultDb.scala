@@ -124,10 +124,16 @@ object defaultDb {
     val rates: TableQuery[Rate] = TableQuery[Rate] 
     !Await.result(myDb.run(rates.exists.result),Duration.Inf)    
   }
+  
+  def lastRateDate() = {
+    val rates: TableQuery[Rate] = TableQuery[Rate]
+    val q = rates.map { x => x.ondate }
+    Await.result(myDb.run(q.max.result),Duration.Inf)
+  }
 
   ////rates
   def saveRates(newRates: List[RateRow]) = {
-    Logger.debug("saving rates: " + newRates.mkString(","))
+    Logger.debug("saving rates: ...")/// + newRates.mkString(","))
     val insertQuery: TableQuery[Rate] = TableQuery[Rate]
     val insertAction = insertQuery ++= newRates //*insertQuery returning insertQuery.map(x => x.id))
 

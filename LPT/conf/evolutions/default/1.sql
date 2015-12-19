@@ -40,6 +40,15 @@ INSERT INTO currency (id, name) VALUES ('THB', 'Thai baht');
 INSERT INTO currency (id, name) VALUES ('ZAR', 'South African rand');
 INSERT INTO currency (id, name) VALUES ('ISK', 'Icelandic krona');
 INSERT INTO currency (id, name) VALUES ('EUR', 'Euro');
+INSERT INTO currency (id, name) VALUES ('LTL', 'Lithuanian Litas');
+INSERT INTO currency (id, name) VALUES ('LVL', 'Latvian Lats');
+INSERT INTO currency (id, name) VALUES ('EEK', 'Estonian Kroon');
+INSERT INTO currency (id, name) VALUES ('SKK', 'Slovak Koruna');
+INSERT INTO currency (id, name) VALUES ('CYP', 'Cypriot pound');
+INSERT INTO currency (id, name) VALUES ('MTL', 'Maltese lira');
+INSERT INTO currency (id, name) VALUES ('SIT', 'Slovenian tolar');
+INSERT INTO currency (id, name) VALUES ('ROL', 'Romanian leu');
+INSERT INTO currency (id, name) VALUES ('TRL', 'Old Turkish lira');
 
 
 CREATE TABLE rate
