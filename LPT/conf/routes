@@ -4,7 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET 	/user						controllers.Application.user
+GET 	/facebook					controllers.Application.facebook
+GET		/google						controllers.Application.google
 GET		/test						controllers.Application.test
 GET		/links						controllers.Application.links
 GET		/quote						controllers.Application.quote

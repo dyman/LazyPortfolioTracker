@@ -1,27 +1,28 @@
 package models.db
-import slick.driver.PostgresDriver.api._
-import models.db.Tables.Country
-import play.Logger
-import models.db.Tables.User
-import models.db.Tables.Quote
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import models.db.Tables.QuoteRow
-import play.cache.Cache
-import scala.concurrent.Future
-import models.db.Tables.Accounttype
-import org.joda.time.DateTime
-import models.db.Tables.UserRow
-import models.db.Tables.UserRow
+
 import scala.concurrent.Await
+import scala.concurrent.Future
 import scala.concurrent.duration.Duration
-import models.db.Tables.RateRow
-import models.db.Tables.Rate
-import scala.util.Success
 import scala.util.Failure
+import org.joda.time.DateTime
+import models.db.Tables.Accounttype
+import models.db.Tables.Country
+import models.db.Tables.Quote
+import models.db.Tables.Rate
+import models.db.Tables.RateRow
+import models.db.Tables.User
+import models.db.Tables.UserRow
+import play.Logger
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.cache.Cache
+import slick.driver.PostgresDriver.api._
+import scala.util.Success
+import slick.backend.DatabaseConfig
+import slick.driver.JdbcProfile
 
 object defaultDb {
 
-  def myDb = Database.forConfig("mydb")
+  //def myDb = Database.forConfig("mydb") 
 
   def countryNames = {
     val db = Database.forConfig("mydb")
@@ -46,40 +47,50 @@ object defaultDb {
   }
 
   def loginAndSaveUser(email: String): Future[Int] = {
+    val myDb = Database.forConfig("mydb")
     Logger.debug("getting user: {}", email)
+    var rt: Future[Int] = null
     val users = for (u <- User) yield u
     val u = users.filter { _.email === email }
-    val t = myDb.run(u.result)
-    var rt: Future[Int] = null
-    t.onComplete({
+    val query = myDb.run(u.result)
+    query.onComplete({
       case Success(ret) => {
-        val u = ret.headOption
-        if (!u.isDefined) {
-          val in = u.get
-          Logger.debug("user found id is: {}", in.id.toString())
-          val today = new java.sql.Timestamp(DateTime.now().getMillis)
-          val userQueries: TableQuery[User] = TableQuery[User]
-          val newIn: UserRow = new UserRow(in.id, email, today, Some(false))
-          val updateAction: DBIO[Int] = userQueries.insertOrUpdate(newIn)
-          Logger.debug(updateAction.toString())
-          rt = Future {
-            in.id
-          }
-        } else {
-          Logger.debug("user not found, inserting")
-          val today = new java.sql.Timestamp(DateTime.now().getMillis)
-          val userQueries: TableQuery[User] = TableQuery[User]
-          val in: UserRow = new UserRow(100, email, today, Some(false))
-          val insertAction: DBIO[Int] = (userQueries returning userQueries.map(x => x.id)) += in
-          rt = myDb.run(insertAction)
-        }
+        Logger.debug(ret.toString())
       }
       case Failure(exception) => {
+        Logger.debug("db user query failed " + exception.toString())
         rt = Future {
           0
         }
       }
     })
+    val t = Await.result(query, Duration.Inf)
+
+    val user = t.headOption
+    if (user.isDefined) {
+      val knownUser = user.get
+      Logger.debug("user found id is: {}", knownUser.id.toString())
+      val today = new java.sql.Timestamp(DateTime.now().getMillis)
+      val userQueries: TableQuery[User] = TableQuery[User]
+      val newIn: UserRow = new UserRow(knownUser.id, email, today, Some(false))
+      val updateAction: DBIO[Int] = userQueries.insertOrUpdate(newIn)
+      rt = myDb.run(updateAction)
+      Logger.debug(updateAction.toString())
+    } else {
+      Logger.debug("user not found, inserting")
+      val today = new java.sql.Timestamp(DateTime.now().getMillis)
+      val userQueries: TableQuery[User] = TableQuery[User]
+      val newUser: UserRow = new UserRow(100, email, today, Some(false))
+      val insertAction: DBIO[Int] = (userQueries returning userQueries.map(x => x.id)) += newUser
+      rt = myDb.run(insertAction)
+    }
+    rt onSuccess {
+      case ret =>
+        {
+          Logger.debug("save user return: " + ret)
+          myDb.close()
+        }
+    }
 
     rt
 
@@ -120,20 +131,23 @@ object defaultDb {
 
   }
 
-  def ratesIsEmpty() = {    
-    val rates: TableQuery[Rate] = TableQuery[Rate] 
-    !Await.result(myDb.run(rates.exists.result),Duration.Inf)    
+  def ratesIsEmpty() = {
+    val myDb = Database.forConfig("mydb")
+    val rates: TableQuery[Rate] = TableQuery[Rate]
+    !Await.result(myDb.run(rates.exists.result), Duration.Inf)
   }
-  
+
   def lastRateDate() = {
+    val myDb = Database.forConfig("mydb")
     val rates: TableQuery[Rate] = TableQuery[Rate]
     val q = rates.map { x => x.ondate }
-    Await.result(myDb.run(q.max.result),Duration.Inf)
+    Await.result(myDb.run(q.max.result), Duration.Inf)
   }
 
   ////rates
   def saveRates(newRates: List[RateRow]) = {
-    Logger.debug("saving rates: ...")/// + newRates.mkString(","))
+    val myDb = Database.forConfig("mydb")
+    Logger.debug(if(newRates.size>0) "saving rates: ..." else "no new rates")
     val insertQuery: TableQuery[Rate] = TableQuery[Rate]
     val insertAction = insertQuery ++= newRates //*insertQuery returning insertQuery.map(x => x.id))
 

@@ -72,8 +72,3 @@ object Global extends GlobalSettings {
   }
 }
 
-class CurrencyActor() extends Actor {
-  def receive: Actor.Receive = {
-    ???
-  }
-}

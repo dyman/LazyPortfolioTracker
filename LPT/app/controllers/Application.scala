@@ -24,14 +24,34 @@ class Application extends Controller with LazyPortfolio {
     request =>
       {
         if (isAuthenticated(request)) {
-          val newSession = getOrCreateSessionId(request)
-          Redirect("/user").withSession(newSession)
+          val profile = getProfile(request)
+          Ok(views.html.index("protected", profile.getEmail, true))
         } else {
 
           Ok(views.html.index("not protected", "log in", false))
         }
 
       }
+  }
+
+  def facebook = RequiresAuthentication("FacebookClient") { profile =>
+    Action { request =>
+      {
+        Logger.debug("facebook authenticated user: " + profile.getEmail + " tries to connect")
+        val userId = loginAndSaveUser(profile.getEmail)
+        Redirect("/")
+      }
+    }
+  }
+
+  def google = RequiresAuthentication("OidcClient") { profile =>
+    Action { request =>
+      {
+        Logger.debug("google authenticated user: " + profile.getEmail + " tries to connect")
+        val userId = loginAndSaveUser(profile.getEmail)
+        Redirect("/")
+      }
+    }
   }
 
   def user = RequiresAuthentication("FacebookClient") { profile =>

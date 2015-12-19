@@ -37,7 +37,17 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     val facebookClient = new FacebookClient(fbId, fbSecret)
     facebookClient.setFields("id,email")
     facebookClient.setScope("email")
-    //val twitterClient = new TwitterClient("HVSQGAw2XmiwcKOTvZFbQ", "FSiO9G9VRR4KCuksky0kgGuo8gAVndYymr4Nl7qc8AA")
+    
+    
+     // OpenID Connect
+    val oidcClient = new OidcClient()
+    oidcClient.setClientID("182505729279-tj1j44f61po08gerkap9a858d4icme4j.apps.googleusercontent.com")
+    oidcClient.setSecret("LGrETno1DNoJGyDyJDFeM_-_")
+    oidcClient.setDiscoveryURI("https://accounts.google.com/.well-known/openid-configuration")
+    oidcClient.addCustomParam("prompt", "consent")
+    
+    
+    
     // HTTP
     val formClient = new FormClient(baseUrl + "/theForm", new SimpleTestUsernamePasswordAuthenticator())
     val indirectBasicAuthClient = new IndirectBasicAuthClient(new SimpleTestUsernamePasswordAuthenticator())
@@ -52,7 +62,7 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     val directBasicAuthClient = new DirectBasicAuthClient(new SimpleTestUsernamePasswordAuthenticator)
 
     val clients = new Clients(baseUrl + "/callback", facebookClient,  formClient,
-      indirectBasicAuthClient, directBasicAuthClient)
+      indirectBasicAuthClient, directBasicAuthClient,oidcClient)
 
     val config = new Config(clients)
     config.addAuthorizer("admin", new RequireAnyRoleAuthorizer("ROLE_ADMIN"))
