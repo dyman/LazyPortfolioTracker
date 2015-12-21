@@ -17,6 +17,7 @@ import play.api.libs.json.Json
 import org.pac4j.play.java.RequiresAuthentication
 import play.Logger
 import play.mvc.Results.Redirect
+import models.UserData
 
 class Application extends Controller with LazyPortfolio {
 
@@ -32,6 +33,22 @@ class Application extends Controller with LazyPortfolio {
         }
 
       }
+  }
+
+  def index2 = Action {
+    request =>
+      {
+        if (isAuthenticated(request)) {
+          val profile = getProfile(request)
+          val user = new UserData(true, profile.getEmail)
+          Ok(views.html.index2("proba", user))
+        } else {
+          val user = new UserData(false, "no email")
+          Ok(views.html.index2("proba", user))
+        }
+
+      }
+
   }
 
   def facebook = RequiresAuthentication("FacebookClient") { profile =>
@@ -65,18 +82,8 @@ class Application extends Controller with LazyPortfolio {
     }
   }
 
-  def test = Action {
-
-    //countryNames.map(i =>
-    Ok(views.html.index("message", "name", false))
-
-  }
-
-  def links = Action.async {
-    accountTypes.map(i => Ok(views.html.links("peti", false)))
-
-  }
-
+ 
+  
   def quote = Action.async {
     getCachesQuotes.map(i => Ok(views.html.quote(Random.shuffle(i.toList).head)))
   }

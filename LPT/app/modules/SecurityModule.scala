@@ -41,8 +41,10 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     
      // OpenID Connect
     val oidcClient = new OidcClient()
-    oidcClient.setClientID("182505729279-tj1j44f61po08gerkap9a858d4icme4j.apps.googleusercontent.com")
-    oidcClient.setSecret("LGrETno1DNoJGyDyJDFeM_-_")
+    val googleId = configuration.getString("googleId").get
+    val googleSecret = configuration.getString("googleSecret").get
+    oidcClient.setClientID(googleId)
+    oidcClient.setSecret(googleSecret)
     oidcClient.setDiscoveryURI("https://accounts.google.com/.well-known/openid-configuration")
     oidcClient.addCustomParam("prompt", "consent")
     

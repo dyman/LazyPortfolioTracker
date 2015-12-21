@@ -18,25 +18,29 @@ import play.libs.Akka
 object Global extends GlobalSettings {
   override def onStart(app: Application) {
     Logger.info("Application has started")
-    import play.api.libs.concurrent.Execution.Implicits._
-    Akka.system.scheduler.schedule(Duration(2, TimeUnit.SECONDS), Duration(1, TimeUnit.DAYS))({
+    if (play.Play.isDev()) {
+      Logger.debug("running in dev mode not scheduling jobs")
+    } else {
+      import play.api.libs.concurrent.Execution.Implicits._
+      Akka.system.scheduler.schedule(Duration(2, TimeUnit.SECONDS), Duration(1, TimeUnit.DAYS))({
 
-      if (defaultDb.ratesIsEmpty()) {
-        val url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml"
-        Logger.debug("rate db is empty saving history: " + url)
-        defaultDb.saveRates(getRates(url).toList)
-      } else {
-        val lastDate = defaultDb.lastRateDate()
-        val url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml"
-        Logger.debug("rate db is not empty, last data from: " + lastDate.toString())
-        Logger.debug("synchronizing with the last 90 days")
-        defaultDb.saveRates(getRates(url, lastDate).toList)
+        if (defaultDb.ratesIsEmpty()) {
+          val url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml"
+          Logger.debug("rate db is empty saving history: " + url)
+          defaultDb.saveRates(getRates(url).toList)
+        } else {
+          val lastDate = defaultDb.lastRateDate()
+          val url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml"
+          Logger.debug("rate db is not empty, last data from: " + lastDate.toString())
+          Logger.debug("synchronizing with the last 90 days")
+          defaultDb.saveRates(getRates(url, lastDate).toList)
 
-      }
+        }
 
-      Logger.debug("tick");
+        Logger.debug("tick");
 
-    })
+      })
+    }
 
   }
 

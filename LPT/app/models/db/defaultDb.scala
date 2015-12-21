@@ -24,27 +24,27 @@ object defaultDb {
 
   //def myDb = Database.forConfig("mydb") 
 
-  def countryNames = {
-    val db = Database.forConfig("mydb")
-    try {
-      Logger.debug("country names query")
-      val countries = for (c <- Country) yield c
-      db.run(countries.result)
-    } finally {
-      db.close()
-    }
-  }
+//  def countryNames = {
+//    val db = Database.forConfig("mydb")
+//    try {
+//      Logger.debug("country names query")
+//      val countries = for (c <- Country) yield c
+//      db.run(countries.result)
+//    } finally {
+//      db.close()
+//    }
+//  }
 
-  def accountTypes = {
-    val db = Database.forConfig("mydb")
-    try {
-      Logger.debug("account types query")
-      val accountTypes = for (a <- Accounttype) yield a
-      db.run(accountTypes.result)
-    } finally {
-      db.close()
-    }
-  }
+//  def accountTypes = {
+//    val db = Database.forConfig("mydb")
+//    try {
+//      Logger.debug("account types query")
+//      val accountTypes = for (a <- Accounttype) yield a
+//      db.run(accountTypes.result)
+//    } finally {
+//      db.close()
+//    }
+//  }
 
   def loginAndSaveUser(email: String): Future[Int] = {
     val myDb = Database.forConfig("mydb")

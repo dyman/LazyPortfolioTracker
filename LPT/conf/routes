@@ -3,11 +3,9 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           controllers.Application.index2
 GET 	/facebook					controllers.Application.facebook
 GET		/google						controllers.Application.google
-GET		/test						controllers.Application.test
-GET		/links						controllers.Application.links
 GET		/quote						controllers.Application.quote
 
 
