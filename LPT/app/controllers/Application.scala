@@ -18,6 +18,9 @@ import org.pac4j.play.java.RequiresAuthentication
 import play.Logger
 import play.mvc.Results.Redirect
 import models.UserData
+import org.pac4j.http.client.indirect.FormClient
+import org.pac4j.oauth.client.FacebookClient
+import org.pac4j.oidc.client.OidcClient
 
 class Application extends Controller with LazyPortfolio {
 
@@ -26,36 +29,31 @@ class Application extends Controller with LazyPortfolio {
       {
         if (isAuthenticated(request)) {
           val profile = getProfile(request)
-          Ok(views.html.index("protected", profile.getEmail, true))
+                    
+          val user = new UserData(true, profile.getEmail, "")
+          Ok(views.html.index("proba", user))
         } else {
-
-          Ok(views.html.index("not protected", "log in", false))
+          val user = notLoggedInUser(request)
+          Ok(views.html.index("proba", user))
         }
-
       }
   }
 
-  def index2 = Action {
-    request =>
-      {
-        if (isAuthenticated(request)) {
-          val profile = getProfile(request)
-          val user = new UserData(true, profile.getEmail)
-          Ok(views.html.index2("proba", user))
-        } else {
-          val user = new UserData(false, "no email")
-          Ok(views.html.index2("proba", user))
-        }
-
-      }
-
+  def notLoggedInUser(request: play.api.mvc.Request[play.api.mvc.AnyContent]) = {
+    val newSession = getOrCreateSessionId(request)
+    val webContext = new PlayWebContext(request, dataStore)
+    val clients = config.getClients()
+    val urlForm = (clients.findClient("FormClient").asInstanceOf[FormClient])
+    //.getRedirectAction(webContext, false).getLocation
+    val user = new UserData(false, "no email", urlForm.getCallbackUrl)
+    user
   }
 
   def facebook = RequiresAuthentication("FacebookClient") { profile =>
     Action { request =>
       {
         Logger.debug("facebook authenticated user: " + profile.getEmail + " tries to connect")
-        val userId = loginAndSaveUser(profile.getEmail)
+        val userId = loginAndSaveUser(profile.getEmail, None, Some("Facebook"))
         Redirect("/")
       }
     }
@@ -65,28 +63,27 @@ class Application extends Controller with LazyPortfolio {
     Action { request =>
       {
         Logger.debug("google authenticated user: " + profile.getEmail + " tries to connect")
-        val userId = loginAndSaveUser(profile.getEmail)
+        val userId = loginAndSaveUser(profile.getEmail, None, Some("Google"))
         Redirect("/")
       }
     }
   }
 
-  def user = RequiresAuthentication("FacebookClient") { profile =>
-    Action { request =>
+  
+  def register = Action {
+    request =>
       {
-        Logger.debug("authenticated user: " + profile.getEmail + " tries to connect")
-        val userId = loginAndSaveUser(profile.getEmail)
+        if (isAuthenticated(request)) {
+          //logout
+        }
+        Ok(views.html.register("register", notLoggedInUser(request)))
 
-        Ok(views.html.index("protected", profile.getEmail, true))
       }
-    }
+
   }
 
- 
-  
   def quote = Action.async {
     getCachesQuotes.map(i => Ok(views.html.quote(Random.shuffle(i.toList).head)))
   }
-
 }
 

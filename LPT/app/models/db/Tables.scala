@@ -170,12 +170,12 @@ trait Tables {
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param currencyid Database column currencyid SqlType(varchar), Length(3,true), Default(None)
    *  @param ondate Database column ondate SqlType(date), Default(None)
-   *  @param rate Database column rate SqlType(money), Default(None) */
-  case class RateRow(id: Int, currencyid: Option[String] = None, ondate: Option[java.sql.Date] = None, rate: Option[Double] = None)
+   *  @param rate Database column rate SqlType(numeric), Default(None) */
+  case class RateRow(id: Int, currencyid: Option[String] = None, ondate: Option[java.sql.Date] = None, rate: Option[scala.math.BigDecimal] = None)
   /** GetResult implicit for fetching RateRow objects using plain SQL queries */
-  implicit def GetResultRateRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[java.sql.Date]], e3: GR[Option[Double]]): GR[RateRow] = GR{
+  implicit def GetResultRateRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[java.sql.Date]], e3: GR[Option[scala.math.BigDecimal]]): GR[RateRow] = GR{
     prs => import prs._
-    RateRow.tupled((<<[Int], <<?[String], <<?[java.sql.Date], <<?[Double]))
+    RateRow.tupled((<<[Int], <<?[String], <<?[java.sql.Date], <<?[scala.math.BigDecimal]))
   }
   /** Table description of table rate. Objects of this class serve as prototypes for rows in queries. */
   class Rate(_tableTag: Tag) extends Table[RateRow](_tableTag, "rate") {
@@ -189,8 +189,8 @@ trait Tables {
     val currencyid: Rep[Option[String]] = column[Option[String]]("currencyid", O.Length(3,varying=true), O.Default(None))
     /** Database column ondate SqlType(date), Default(None) */
     val ondate: Rep[Option[java.sql.Date]] = column[Option[java.sql.Date]]("ondate", O.Default(None))
-    /** Database column rate SqlType(money), Default(None) */
-    val rate: Rep[Option[Double]] = column[Option[Double]]("rate", O.Default(None))
+    /** Database column rate SqlType(numeric), Default(None) */
+    val rate: Rep[Option[scala.math.BigDecimal]] = column[Option[scala.math.BigDecimal]]("rate", O.Default(None))
 
     /** Foreign key referencing Currency (database name rate_currencyid_fkey) */
     lazy val currencyFk = foreignKey("rate_currencyid_fkey", currencyid, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -201,28 +201,34 @@ trait Tables {
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param email Database column email SqlType(varchar), Length(255,true)
+   *  @param password Database column password SqlType(varchar), Length(255,true), Default(None)
    *  @param lastactivity Database column lastactivity SqlType(timestamp)
-   *  @param isadmin Database column isadmin SqlType(bool), Default(None) */
-  case class UserRow(id: Int, email: String, lastactivity: java.sql.Timestamp, isadmin: Option[Boolean] = None)
+   *  @param isadmin Database column isadmin SqlType(bool), Default(None)
+   *  @param lastlogin Database column lastlogin SqlType(varchar), Length(255,true), Default(None) */
+  case class UserRow(id: Int, email: String, password: Option[String] = None, lastactivity: java.sql.Timestamp, isadmin: Option[Boolean] = None, lastlogin: Option[String] = None)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
-  implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Timestamp], e3: GR[Option[Boolean]]): GR[UserRow] = GR{
+  implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String], e2: GR[Option[String]], e3: GR[java.sql.Timestamp], e4: GR[Option[Boolean]]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<[String], <<[java.sql.Timestamp], <<?[Boolean]))
+    UserRow.tupled((<<[Int], <<[String], <<?[String], <<[java.sql.Timestamp], <<?[Boolean], <<?[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
-    def * = (id, email, lastactivity, isadmin) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, email, password, lastactivity, isadmin, lastlogin) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(email), Rep.Some(lastactivity), isadmin).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2.get, _3.get, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(email), password, Rep.Some(lastactivity), isadmin, lastlogin).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column email SqlType(varchar), Length(255,true) */
     val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
+    /** Database column password SqlType(varchar), Length(255,true), Default(None) */
+    val password: Rep[Option[String]] = column[Option[String]]("password", O.Length(255,varying=true), O.Default(None))
     /** Database column lastactivity SqlType(timestamp) */
     val lastactivity: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("lastactivity")
     /** Database column isadmin SqlType(bool), Default(None) */
     val isadmin: Rep[Option[Boolean]] = column[Option[Boolean]]("isadmin", O.Default(None))
+    /** Database column lastlogin SqlType(varchar), Length(255,true), Default(None) */
+    val lastlogin: Rep[Option[String]] = column[Option[String]]("lastlogin", O.Length(255,varying=true), O.Default(None))
 
     /** Uniqueness Index over (email) (database name email_uniqe) */
     val index1 = index("email_uniqe", email, unique=true)

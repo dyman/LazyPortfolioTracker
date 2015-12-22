@@ -3,10 +3,14 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index2
+GET     /                           controllers.Application.index
 GET 	/facebook					controllers.Application.facebook
 GET		/google						controllers.Application.google
 GET		/quote						controllers.Application.quote
+GET		/register					controllers.Application.register
+
+POST	/register					controllers.Application.register
+
 
 
 

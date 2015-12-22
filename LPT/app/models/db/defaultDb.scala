@@ -24,29 +24,29 @@ object defaultDb {
 
   //def myDb = Database.forConfig("mydb") 
 
-//  def countryNames = {
-//    val db = Database.forConfig("mydb")
-//    try {
-//      Logger.debug("country names query")
-//      val countries = for (c <- Country) yield c
-//      db.run(countries.result)
-//    } finally {
-//      db.close()
-//    }
-//  }
+  //  def countryNames = {
+  //    val db = Database.forConfig("mydb")
+  //    try {
+  //      Logger.debug("country names query")
+  //      val countries = for (c <- Country) yield c
+  //      db.run(countries.result)
+  //    } finally {
+  //      db.close()
+  //    }
+  //  }
 
-//  def accountTypes = {
-//    val db = Database.forConfig("mydb")
-//    try {
-//      Logger.debug("account types query")
-//      val accountTypes = for (a <- Accounttype) yield a
-//      db.run(accountTypes.result)
-//    } finally {
-//      db.close()
-//    }
-//  }
+  //  def accountTypes = {
+  //    val db = Database.forConfig("mydb")
+  //    try {
+  //      Logger.debug("account types query")
+  //      val accountTypes = for (a <- Accounttype) yield a
+  //      db.run(accountTypes.result)
+  //    } finally {
+  //      db.close()
+  //    }
+  //  }
 
-  def loginAndSaveUser(email: String): Future[Int] = {
+  def loginAndSaveUser(email: String, password: Option[String], lastLogin: Option[String]): Future[Int] = {
     val myDb = Database.forConfig("mydb")
     Logger.debug("getting user: {}", email)
     var rt: Future[Int] = null
@@ -72,7 +72,7 @@ object defaultDb {
       Logger.debug("user found id is: {}", knownUser.id.toString())
       val today = new java.sql.Timestamp(DateTime.now().getMillis)
       val userQueries: TableQuery[User] = TableQuery[User]
-      val newIn: UserRow = new UserRow(knownUser.id, email, today, Some(false))
+      val newIn: UserRow = new UserRow(knownUser.id, email, password, today, Some(false), lastLogin)
       val updateAction: DBIO[Int] = userQueries.insertOrUpdate(newIn)
       rt = myDb.run(updateAction)
       Logger.debug(updateAction.toString())
@@ -80,7 +80,7 @@ object defaultDb {
       Logger.debug("user not found, inserting")
       val today = new java.sql.Timestamp(DateTime.now().getMillis)
       val userQueries: TableQuery[User] = TableQuery[User]
-      val newUser: UserRow = new UserRow(100, email, today, Some(false))
+      val newUser: UserRow = new UserRow(100, email, password, today, Some(false), lastLogin)
       val insertAction: DBIO[Int] = (userQueries returning userQueries.map(x => x.id)) += newUser
       rt = myDb.run(insertAction)
     }
@@ -147,7 +147,7 @@ object defaultDb {
   ////rates
   def saveRates(newRates: List[RateRow]) = {
     val myDb = Database.forConfig("mydb")
-    Logger.debug(if(newRates.size>0) "saving rates: ..." else "no new rates")
+    Logger.debug(if (newRates.size > 0) "saving rates: ..." else "no new rates")
     val insertQuery: TableQuery[Rate] = TableQuery[Rate]
     val insertAction = insertQuery ++= newRates //*insertQuery returning insertQuery.map(x => x.id))
 

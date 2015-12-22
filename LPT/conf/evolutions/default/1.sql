@@ -81,8 +81,10 @@ CREATE TABLE "user"
 (
   id serial NOT NULL,
   email character varying(255) NOT NULL,
+  password varchar(255),
   lastactivity timestamp without time zone NOT NULL,
   isadmin boolean,
+  lastlogin varchar(255),
   CONSTRAINT user_pkey PRIMARY KEY (id),
   CONSTRAINT email_uniqe UNIQUE (email)
 );
