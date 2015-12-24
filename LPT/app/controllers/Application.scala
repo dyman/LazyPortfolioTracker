@@ -21,6 +21,14 @@ import models.UserData
 import org.pac4j.http.client.indirect.FormClient
 import org.pac4j.oauth.client.FacebookClient
 import org.pac4j.oidc.client.OidcClient
+import play.api.data.Form
+import play.api.data.Mapping
+import play.api.data._
+import play.api.data.format.Formats._
+import play.api.data.Forms._
+import models.RegistrationData
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 class Application extends Controller with LazyPortfolio {
 
@@ -29,7 +37,7 @@ class Application extends Controller with LazyPortfolio {
       {
         if (isAuthenticated(request)) {
           val profile = getProfile(request)
-                    
+
           val user = new UserData(true, profile.getEmail, "")
           Ok(views.html.index("proba", user))
         } else {
@@ -45,8 +53,7 @@ class Application extends Controller with LazyPortfolio {
     val clients = config.getClients()
     val urlForm = (clients.findClient("FormClient").asInstanceOf[FormClient])
     //.getRedirectAction(webContext, false).getLocation
-    val user = new UserData(false, "no email", urlForm.getCallbackUrl)
-    user
+    new UserData(false, "no email", urlForm.getCallbackUrl)
   }
 
   def facebook = RequiresAuthentication("FacebookClient") { profile =>
@@ -69,15 +76,41 @@ class Application extends Controller with LazyPortfolio {
     }
   }
 
-  
-  def register = Action {
+  val registrationDataForm = Form(
+    mapping(
+      "username" -> text,
+      "password" -> text,
+      "passwordAgain" -> text)(RegistrationData.apply)(RegistrationData.unapply))
+      
+      
+
+  def reg = Action {
     request =>
       {
-        if (isAuthenticated(request)) {
-          //logout
+        if (!isAuthenticated(request)) {
+          Redirect("/register")
+        } else {
+          Redirect("/")
         }
-        Ok(views.html.register("register", notLoggedInUser(request)))
+      }
+  }
 
+  def register = Action {
+    implicit request =>
+      {
+        val data = registrationDataForm.bindFromRequest
+
+        data.fold(
+          f => {
+            Logger.debug("redisplay form because it has errors: " + f)
+            Ok(views.html.register(f, "register", notLoggedInUser(request)))
+          },
+          t => {
+            Logger.debug("tries to register" + t)
+            val user = notLoggedInUser(request)
+            Ok(views.html.index("proba", user))
+          })
+        
       }
 
   }

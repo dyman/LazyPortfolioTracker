@@ -20,6 +20,12 @@ libraryDependencies += "com.typesafe.slick" %% "slick-codegen" % "3.1.0"
 
 libraryDependencies += "org.pac4j" % "play-pac4j-scala_2.11" % "2.0.0"
 
+//webjars
+libraryDependencies += "org.webjars" % "webjars-play_2.10" % "2.4.0-2"
+libraryDependencies += "org.webjars" % "bootstrap" % "3.3.6"
+libraryDependencies += "org.webjars" % "font-awesome" % "4.5.0"
+
+
 
 libraryDependencies ++= Seq(
   "org.pac4j" % "pac4j-http" % "1.8.1",

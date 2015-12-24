@@ -1,11 +1,32 @@
-@(message: String,user:UserData) 
-@template(title = "Lazy Portfolio Tracker",user) {
-<div class="container">
-	<h1>Register</h1>
-	</p>
+@(regForm: Form[RegistrationData], message: String,user:UserData)(implicit messages: Messages)
+@import helper._
 
-	<h1>Lazy Portfolio Tracker - @message</h1>
-	<p>Registration page</p>
+@template(title = "Lazy Portfolio Tracker", user) {
+<div class="container">
+
+@helper.form(action = routes.Application.register()) {  
+<h2 class="form-signin-heading">Please register</h2>
+<label for="username" class="sr-only">Email address</label>
+    @input(regForm("username")) { (id, name, value, args) =>
+    <input type="email" name="@name" id="@id" @toHtmlArgs(args)>
+}
+  @inputText(regForm("password"),args = 'size -> 10, 'placeholder -> "Password")
+  @inputText(regForm("passwordAgain"),args = 'size -> 10, 'placeholder -> "Password again")  
+}
+
+	<form class="form-signin" method="POST" action="/register">
+        <h2 class="form-signin-heading">Please register</h2>
+        <label for="username" class="sr-only">Email address</label>
+        <input type="email" id="username" name="username" class="form-control" placeholder="Email address" required autofocus>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        <label for="passwordAgain" class="sr-only">Password</label>
+        <input type="password" id="passwordAgain" name="passwordAgain" class="form-control" placeholder="Retype password" required data-fv-identical="true"
+                data-fv-identical-field="password"
+                data-fv-identical-message="The password and its confirm are not the same">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        	
+    </form>
 
 </div>
 

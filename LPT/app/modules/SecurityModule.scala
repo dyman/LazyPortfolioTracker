@@ -51,7 +51,7 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     
     
     // HTTP
-    val formClient = new FormClient(baseUrl + "/register", new LPTUsernamePasswordAuthenticator())
+    val formClient = new FormClient(baseUrl + "/reg", new LPTUsernamePasswordAuthenticator())
     val indirectBasicAuthClient = new IndirectBasicAuthClient(new SimpleTestUsernamePasswordAuthenticator())
 
     val playCacheStore = new PlayCacheStore()
