@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.File
 import models.db.defaultDb._
 import scala.util.Random
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -29,8 +30,12 @@ import play.api.data.Forms._
 import models.RegistrationData
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import models.LoginData
+import javax.inject.Inject
+import play.api.libs.mailer._
+import org.apache.commons.mail.EmailAttachment
 
-class Application extends Controller with LazyPortfolio {
+class Application @Inject() (mailer: MailerClient) extends Controller with LazyPortfolio {
 
   def index = Action {
     request =>
@@ -81,8 +86,11 @@ class Application extends Controller with LazyPortfolio {
       "username" -> text,
       "password" -> text,
       "passwordAgain" -> text)(RegistrationData.apply)(RegistrationData.unapply))
-      
-      
+
+  val loginDataForm = Form(
+    mapping(
+      "username" -> text,
+      "password" -> text)(LoginData.apply)(LoginData.unapply))
 
   def reg = Action {
     request =>
@@ -98,6 +106,10 @@ class Application extends Controller with LazyPortfolio {
   def register = Action {
     implicit request =>
       {
+        val logindata = loginDataForm.bindFromRequest
+        if (logindata.hasErrors) {
+          Logger.debug("wrong login request" + logindata.toString() + " " + logindata.errors.toString())
+        }
         val data = registrationDataForm.bindFromRequest
 
         data.fold(
@@ -106,17 +118,35 @@ class Application extends Controller with LazyPortfolio {
             Ok(views.html.register(f, "register", notLoggedInUser(request)))
           },
           t => {
+            val user = new UserData(true, t.email, "")
             Logger.debug("tries to register" + t)
-            val user = notLoggedInUser(request)
-            Ok(views.html.index("proba", user))
+            sendEmail(t.email)
+            Ok(views.html.index("regs", user))
           })
-        
-      }
 
+      }
   }
 
   def quote = Action.async {
     getCachesQuotes.map(i => Ok(views.html.quote(Random.shuffle(i.toList).head)))
   }
+
+  def sendEmail(emailAddress:String): Unit = {
+
+    val cid = "1234"
+    val file = AttachmentFile("favicon.png", new File(current.classloader.getResource("public/images/favicon.png").getPath))
+    val email = Email(
+      "Simple email",
+      "lazyportfoliotracker4@gmail.com",
+      Seq("mandypeter@gmail.com",emailAddress),
+      //bodyText = Some("A text message"),
+      bodyHtml = Some(s"""<html><body><p>An <b>html</b> message with cid <img src="cid:$cid"></p></body></html>"""),
+      attachments = Seq(
+        file,
+        AttachmentData("data.txt", "data".getBytes, "text/plain", Some("Simple data"), Some(EmailAttachment.INLINE))))
+
+    val id = mailer.send(email)
+  }
+
 }
 

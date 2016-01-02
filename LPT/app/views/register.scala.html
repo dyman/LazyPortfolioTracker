@@ -4,20 +4,23 @@
 @template(title = "Lazy Portfolio Tracker", user) {
 <div class="container">
 
-@helper.form(action = routes.Application.register()) {  
-<h2 class="form-signin-heading">Please register</h2>
-<label for="username" class="sr-only">Email address</label>
-    @input(regForm("username")) { (id, name, value, args) =>
-    <input type="email" name="@name" id="@id" @toHtmlArgs(args)>
-}
-  @inputText(regForm("password"),args = 'size -> 10, 'placeholder -> "Password")
-  @inputText(regForm("passwordAgain"),args = 'size -> 10, 'placeholder -> "Password again")  
-}
 
-	<form class="form-signin" method="POST" action="/register">
-        <h2 class="form-signin-heading">Please register</h2>
+	<form class="form-signin" method="POST" action="@user.form">
+        <h2 class="form-signin-heading">Login</h2>
         <label for="username" class="sr-only">Email address</label>
         <input type="email" id="username" name="username" class="form-control" placeholder="Email address" required autofocus>
+        <span class="help-block">Please provide your email address</span>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+        	
+    </form>
+	<form class="form-signin" method="POST" action="/register">	
+	
+        <h2 class="form-signin-heading">Register</h2>
+        <label for="username" class="sr-only">Email address</label>
+        <input type="email" id="username" name="username" class="form-control" placeholder="Email address" required autofocus>
+        <span class="help-block">Please provide your email address</span>
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
         <label for="passwordAgain" class="sr-only">Password</label>
