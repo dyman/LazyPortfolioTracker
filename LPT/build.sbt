@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 //jdbc,
 libraryDependencies ++= Seq(  
   cache,
@@ -28,16 +28,15 @@ libraryDependencies += "org.webjars" % "bootstrap" % "3.3.6"
 libraryDependencies += "org.webjars" % "font-awesome" % "4.5.0"
 
 //mailer plugin
-libraryDependencies += "com.typesafe.play" % "play-mailer_2.11" % "3.0.1"
+libraryDependencies += "com.typesafe.play" % "play-mailer_2.11" % "4.0.0-M1"
+
 
 
 libraryDependencies ++= Seq(
-  "org.pac4j" % "pac4j-http" % "1.8.1",
-  "org.pac4j" % "pac4j-openid" % "1.8.1",
-  "org.pac4j" % "pac4j-oauth" % "1.8.1",
-  "org.pac4j" % "pac4j-oidc" % "1.8.1",  
-  "org.pac4j" % "pac4j-sql" % "1.8.1"
-  
+  "org.pac4j" % "pac4j-http" % "1.8.2",
+  "org.pac4j" % "pac4j-openid" % "1.8.2",
+  "org.pac4j" % "pac4j-oauth" % "1.8.2",
+  "org.pac4j" % "pac4j-oidc" % "1.8.2"  
 )
 
 

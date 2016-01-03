@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Array(Accounttype.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, User.schema).reduceLeft(_ ++ _)
+  lazy val schema: profile.SchemaDescription = Array(Accounttype.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -197,6 +197,38 @@ trait Tables {
   }
   /** Collection-like TableQuery object for table Rate */
   lazy val Rate = new TableQuery(tag => new Rate(tag))
+
+  /** Entity class storing rows of table Registration
+   *  @param id Database column id SqlType(varchar), PrimaryKey, Length(255,true)
+   *  @param email Database column email SqlType(varchar), Length(255,true)
+   *  @param password Database column password SqlType(varchar), Length(255,true)
+   *  @param ondate Database column ondate SqlType(timestamp)
+   *  @param confirmed Database column confirmed SqlType(bool), Default(None) */
+  case class RegistrationRow(id: String, email: String, password: String, ondate: java.sql.Timestamp, confirmed: Option[Boolean] = None)
+  /** GetResult implicit for fetching RegistrationRow objects using plain SQL queries */
+  implicit def GetResultRegistrationRow(implicit e0: GR[String], e1: GR[java.sql.Timestamp], e2: GR[Option[Boolean]]): GR[RegistrationRow] = GR{
+    prs => import prs._
+    RegistrationRow.tupled((<<[String], <<[String], <<[String], <<[java.sql.Timestamp], <<?[Boolean]))
+  }
+  /** Table description of table registration. Objects of this class serve as prototypes for rows in queries. */
+  class Registration(_tableTag: Tag) extends Table[RegistrationRow](_tableTag, "registration") {
+    def * = (id, email, password, ondate, confirmed) <> (RegistrationRow.tupled, RegistrationRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), Rep.Some(email), Rep.Some(password), Rep.Some(ondate), confirmed).shaped.<>({r=>import r._; _1.map(_=> RegistrationRow.tupled((_1.get, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(varchar), PrimaryKey, Length(255,true) */
+    val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(255,varying=true))
+    /** Database column email SqlType(varchar), Length(255,true) */
+    val email: Rep[String] = column[String]("email", O.Length(255,varying=true))
+    /** Database column password SqlType(varchar), Length(255,true) */
+    val password: Rep[String] = column[String]("password", O.Length(255,varying=true))
+    /** Database column ondate SqlType(timestamp) */
+    val ondate: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("ondate")
+    /** Database column confirmed SqlType(bool), Default(None) */
+    val confirmed: Rep[Option[Boolean]] = column[Option[Boolean]]("confirmed", O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Registration */
+  lazy val Registration = new TableQuery(tag => new Registration(tag))
 
   /** Entity class storing rows of table User
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey

@@ -19,32 +19,25 @@ import slick.driver.PostgresDriver.api._
 import scala.util.Success
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
+import models.db.Tables.Registration
+import models.db.Tables.RegistrationRow
 
 object defaultDb {
 
-  //def myDb = Database.forConfig("mydb") 
+  def uuid = java.util.UUID.randomUUID.toString
 
-  //  def countryNames = {
-  //    val db = Database.forConfig("mydb")
-  //    try {
-  //      Logger.debug("country names query")
-  //      val countries = for (c <- Country) yield c
-  //      db.run(countries.result)
-  //    } finally {
-  //      db.close()
-  //    }
-  //  }
-
-  //  def accountTypes = {
-  //    val db = Database.forConfig("mydb")
-  //    try {
-  //      Logger.debug("account types query")
-  //      val accountTypes = for (a <- Accounttype) yield a
-  //      db.run(accountTypes.result)
-  //    } finally {
-  //      db.close()
-  //    }
-  //  }
+  def preRegisterUser(email: String, password: String) = {
+    Logger.debug("preRegistering user: " + email)
+    val myDb = Database.forConfig("mydb")
+    val today = new java.sql.Timestamp(DateTime.now().getMillis)
+    val regQueries: TableQuery[Registration] = TableQuery[Registration]
+    val uid = uuid
+    val newIn: RegistrationRow = new RegistrationRow(uid, email, password, today,Some(false))
+    val updateAction: DBIO[Int] = regQueries.insertOrUpdate(newIn)
+    val ret = myDb.run(updateAction)
+    val tadsf = Await.result(ret, Duration.Inf)
+    uid
+  }
 
   def loginAndSaveUser(email: String, password: Option[String], lastLogin: Option[String]): Future[Int] = {
     val myDb = Database.forConfig("mydb")
@@ -93,6 +86,9 @@ object defaultDb {
     }
 
     rt
+  }
+
+  def getUserRegistration(confirmId: String) = {
 
   }
 

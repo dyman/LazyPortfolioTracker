@@ -13,6 +13,7 @@ POST	/reg						controllers.Application.reg
 GET		/register					controllers.Application.register
 POST	/register					controllers.Application.register
 
+GET		/confirm/*id					controllers.Application.confirm(id)
 
 
 

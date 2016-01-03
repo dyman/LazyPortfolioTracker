@@ -89,6 +89,16 @@ CREATE TABLE "user"
   CONSTRAINT email_uniqe UNIQUE (email)
 );
 
+CREATE TABLE "registration"
+(
+  id character varying(255) NOT NULL,
+  email character varying(255) NOT NULL,
+  password varchar(255) NOT NULL,
+  ondate timestamp without time zone NOT NULL,
+  confirmed boolean,
+  CONSTRAINT "registration_pkey" PRIMARY KEY (id)
+);
+
 CREATE TABLE "accounttype"
 (
   id serial NOT NULL,
@@ -106,4 +116,5 @@ DROP TABLE "user";
 DROP TABLE "country";
 DROP TABLE "rate";
 DROP TABLE "currency";
+DROP TABLE "registration";
 
