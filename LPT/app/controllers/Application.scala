@@ -101,7 +101,7 @@ class Application @Inject() (mailer: Mailer) extends Controller with LazyPortfol
 
               mailer.sendMail(Message.registration(t.email, uid))
             }
-            Ok(views.html.emailsent("regs", user))
+            Ok(views.html.logins.emailsent("regs", user))
           })
 
       }
@@ -111,7 +111,7 @@ class Application @Inject() (mailer: Mailer) extends Controller with LazyPortfol
     implicit request =>
       {
         Logger.debug("confirmation id: " + id)
-        Ok(views.html.confirmed("confirmed", notLoggedInUser(request)))
+        Ok(views.html.logins.confirmed("confirmed", notLoggedInUser(request)))
       }
   }
 
