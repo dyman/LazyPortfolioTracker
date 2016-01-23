@@ -43,7 +43,42 @@ CREATE TABLE account
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+
+CREATE TABLE recording
+(
+  id serial NOT NULL,
+  accountid integer,
+  ondate date,
+  CONSTRAINT recording_pkey PRIMARY KEY (id),
+  CONSTRAINT recording_accountid_fkey FOREIGN KEY (accountid)
+      REFERENCES account (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE inventory
+(
+  id serial NOT NULL,
+  recordingid integer,
+  assetclassratioid integer,
+  name character varying(255),
+  currency character varying(3),
+  amount numeric,
+  CONSTRAINT inventory_pkey PRIMARY KEY (id),
+  CONSTRAINT inventory_assetclassratioid_fkey FOREIGN KEY (assetclassratioid)
+      REFERENCES assetclassratio (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT inventory_currency_fkey FOREIGN KEY (currency)
+      REFERENCES currency (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT inventory_recordingid_fkey FOREIGN KEY (recordingid)
+      REFERENCES recording (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
 # --- !Downs
+drop table inventory;
+drop table recording;
 drop table account;
 drop table assetclassratio;
+
 
