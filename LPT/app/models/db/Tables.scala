@@ -14,25 +14,74 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Array(Accounttype.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
+  lazy val schema: profile.SchemaDescription = Array(Account.schema, Accounttype.schema, Assetclassratio.schema, Country.schema, Currency.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
+
+  /** Entity class storing rows of table Account
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param accounttypeid Database column accounttypeid SqlType(int4), Default(None)
+   *  @param userid Database column userid SqlType(int4), Default(None)
+   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
+   *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
+   *  @param defaultcurrency Database column defaultcurrency SqlType(varchar), Length(3,true), Default(None)
+   *  @param assetclassratioid Database column assetclassratioid SqlType(int4), Default(None) */
+  case class AccountRow(id: Int, accounttypeid: Option[Int] = None, userid: Option[Int] = None, name: Option[String] = None, description: Option[String] = None, defaultcurrency: Option[String] = None, assetclassratioid: Option[Int] = None)
+  /** GetResult implicit for fetching AccountRow objects using plain SQL queries */
+  implicit def GetResultAccountRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[String]]): GR[AccountRow] = GR{
+    prs => import prs._
+    AccountRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Int]))
+  }
+  /** Table description of table account. Objects of this class serve as prototypes for rows in queries. */
+  class Account(_tableTag: Tag) extends Table[AccountRow](_tableTag, "account") {
+    def * = (id, accounttypeid, userid, name, description, defaultcurrency, assetclassratioid) <> (AccountRow.tupled, AccountRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), accounttypeid, userid, name, description, defaultcurrency, assetclassratioid).shaped.<>({r=>import r._; _1.map(_=> AccountRow.tupled((_1.get, _2, _3, _4, _5, _6, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column accounttypeid SqlType(int4), Default(None) */
+    val accounttypeid: Rep[Option[Int]] = column[Option[Int]]("accounttypeid", O.Default(None))
+    /** Database column userid SqlType(int4), Default(None) */
+    val userid: Rep[Option[Int]] = column[Option[Int]]("userid", O.Default(None))
+    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
+    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+    /** Database column description SqlType(varchar), Length(255,true), Default(None) */
+    val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
+    /** Database column defaultcurrency SqlType(varchar), Length(3,true), Default(None) */
+    val defaultcurrency: Rep[Option[String]] = column[Option[String]]("defaultcurrency", O.Length(3,varying=true), O.Default(None))
+    /** Database column assetclassratioid SqlType(int4), Default(None) */
+    val assetclassratioid: Rep[Option[Int]] = column[Option[Int]]("assetclassratioid", O.Default(None))
+
+    /** Foreign key referencing Accounttype (database name account_typeid_fkey) */
+    lazy val accounttypeFk = foreignKey("account_typeid_fkey", accounttypeid, Accounttype)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Assetclassratio (database name account_assetclassratioid_fkey) */
+    lazy val assetclassratioFk = foreignKey("account_assetclassratioid_fkey", assetclassratioid, Assetclassratio)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Currency (database name account_defaultcurrency_fkey) */
+    lazy val currencyFk = foreignKey("account_defaultcurrency_fkey", defaultcurrency, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing User (database name account_userid_fkey) */
+    lazy val userFk = foreignKey("account_userid_fkey", userid, User)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+  }
+  /** Collection-like TableQuery object for table Account */
+  lazy val Account = new TableQuery(tag => new Account(tag))
 
   /** Entity class storing rows of table Accounttype
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
-   *  @param countryid Database column countryid SqlType(int2) */
-  case class AccounttypeRow(id: Int, name: Option[String] = None, countryid: Short)
+   *  @param countryid Database column countryid SqlType(int2)
+   *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
+   *  @param url Database column url SqlType(_varchar), Length(255,false), Default(None) */
+  case class AccounttypeRow(id: Int, name: Option[String] = None, countryid: Short, description: Option[String] = None, url: Option[String] = None)
   /** GetResult implicit for fetching AccounttypeRow objects using plain SQL queries */
   implicit def GetResultAccounttypeRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Short]): GR[AccounttypeRow] = GR{
     prs => import prs._
-    AccounttypeRow.tupled((<<[Int], <<?[String], <<[Short]))
+    AccounttypeRow.tupled((<<[Int], <<?[String], <<[Short], <<?[String], <<?[String]))
   }
   /** Table description of table accounttype. Objects of this class serve as prototypes for rows in queries. */
   class Accounttype(_tableTag: Tag) extends Table[AccounttypeRow](_tableTag, "accounttype") {
-    def * = (id, name, countryid) <> (AccounttypeRow.tupled, AccounttypeRow.unapply)
+    def * = (id, name, countryid, description, url) <> (AccounttypeRow.tupled, AccounttypeRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), name, Rep.Some(countryid)).shaped.<>({r=>import r._; _1.map(_=> AccounttypeRow.tupled((_1.get, _2, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), name, Rep.Some(countryid), description, url).shaped.<>({r=>import r._; _1.map(_=> AccounttypeRow.tupled((_1.get, _2, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -40,12 +89,57 @@ trait Tables {
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column countryid SqlType(int2) */
     val countryid: Rep[Short] = column[Short]("countryid")
+    /** Database column description SqlType(varchar), Length(255,true), Default(None) */
+    val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
+    /** Database column url SqlType(_varchar), Length(255,false), Default(None) */
+    val url: Rep[Option[String]] = column[Option[String]]("url", O.Length(255,varying=false), O.Default(None))
 
     /** Foreign key referencing Country (database name country_fkey) */
     lazy val countryFk = foreignKey("country_fkey", countryid, Country)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
   /** Collection-like TableQuery object for table Accounttype */
   lazy val Accounttype = new TableQuery(tag => new Accounttype(tag))
+
+  /** Entity class storing rows of table Assetclassratio
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
+   *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
+   *  @param stocks Database column stocks SqlType(float8), Default(None)
+   *  @param fic Database column fic SqlType(float8), Default(None)
+   *  @param mm Database column mm SqlType(float8), Default(None)
+   *  @param realestate Database column realestate SqlType(float8), Default(None)
+   *  @param otherProperty Database column other_property SqlType(float8), Default(None) */
+  case class AssetclassratioRow(id: Int, name: Option[String] = None, description: Option[String] = None, stocks: Option[Double] = None, fic: Option[Double] = None, mm: Option[Double] = None, realestate: Option[Double] = None, otherProperty: Option[Double] = None)
+  /** GetResult implicit for fetching AssetclassratioRow objects using plain SQL queries */
+  implicit def GetResultAssetclassratioRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[Double]]): GR[AssetclassratioRow] = GR{
+    prs => import prs._
+    AssetclassratioRow.tupled((<<[Int], <<?[String], <<?[String], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double]))
+  }
+  /** Table description of table assetclassratio. Objects of this class serve as prototypes for rows in queries. */
+  class Assetclassratio(_tableTag: Tag) extends Table[AssetclassratioRow](_tableTag, "assetclassratio") {
+    def * = (id, name, description, stocks, fic, mm, realestate, otherProperty) <> (AssetclassratioRow.tupled, AssetclassratioRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), name, description, stocks, fic, mm, realestate, otherProperty).shaped.<>({r=>import r._; _1.map(_=> AssetclassratioRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
+    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+    /** Database column description SqlType(varchar), Length(255,true), Default(None) */
+    val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
+    /** Database column stocks SqlType(float8), Default(None) */
+    val stocks: Rep[Option[Double]] = column[Option[Double]]("stocks", O.Default(None))
+    /** Database column fic SqlType(float8), Default(None) */
+    val fic: Rep[Option[Double]] = column[Option[Double]]("fic", O.Default(None))
+    /** Database column mm SqlType(float8), Default(None) */
+    val mm: Rep[Option[Double]] = column[Option[Double]]("mm", O.Default(None))
+    /** Database column realestate SqlType(float8), Default(None) */
+    val realestate: Rep[Option[Double]] = column[Option[Double]]("realestate", O.Default(None))
+    /** Database column other_property SqlType(float8), Default(None) */
+    val otherProperty: Rep[Option[Double]] = column[Option[Double]]("other_property", O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Assetclassratio */
+  lazy val Assetclassratio = new TableQuery(tag => new Assetclassratio(tag))
 
   /** Entity class storing rows of table Country
    *  @param id Database column id SqlType(int2), PrimaryKey
