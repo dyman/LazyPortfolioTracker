@@ -75,6 +75,9 @@ CREATE TABLE "country"
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+INSERT INTO country (id, code, currency, name) VALUES (1, 'HU', 'HUF', 'Hungary');
+INSERT INTO country (id, code, currency, name) VALUES (2, 'DE', 'EUR', 'Germany');
+INSERT INTO country (id, code, currency, name) VALUES (3, 'GB', 'GBP', 'Great Britain');
 
 
 CREATE TABLE "user"
@@ -103,12 +106,23 @@ CREATE TABLE "accounttype"
 (
   id serial NOT NULL,
   name character varying(255),
-  "countryid" smallint NOT NULL,
-  CONSTRAINT "accounttype_pkey" PRIMARY KEY (id),
-  CONSTRAINT country_fkey FOREIGN KEY ("countryid")
+  countryid smallint NOT NULL,
+  description character varying(255),
+  url character varying(255)[],
+  CONSTRAINT accounttype_pkey PRIMARY KEY (id),
+  CONSTRAINT country_fkey FOREIGN KEY (countryid)
       REFERENCES country (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+
+
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (1, 'TBSZ', 1, 'tartós befektetési számla', NULL);
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (2, 'ONYP', 1, 'önkéntes nyugdíjpénztár', NULL);
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (3, 'EP', 1, 'egészség pénztár', NULL);
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (4, 'OSP', 1, 'önsegélyező pénztár', NULL);
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (5, 'LPT', 1, 'lakás takarékpénztár', NULL);
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (6, 'NYESZ', 1, 'nyugdíj előtakarékossági számla', NULL);
+INSERT INTO accounttype (id, name, countryid, description, url) VALUES (7, 'NYB', 1, 'nyugdíj biztosítás', NULL);
 
 # --- !Downs
 DROP TABLE "accounttype";
