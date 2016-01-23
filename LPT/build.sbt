@@ -27,6 +27,10 @@ libraryDependencies += "org.pac4j" % "play-pac4j-scala_2.11" % "2.0.0"
 libraryDependencies += "org.webjars" % "bootstrap" % "3.3.6"
 libraryDependencies += "org.webjars" % "font-awesome" % "4.5.0"
 
+libraryDependencies += "org.webjars" % "angularjs" % "1.4.8"
+libraryDependencies += "org.webjars" % "angular-ui-bootstrap" % "0.14.3"
+
+
 //mailer plugin
 libraryDependencies += "com.typesafe.play" % "play-mailer_2.11" % "4.0.0-M1"
 
