@@ -104,22 +104,23 @@ trait Tables {
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
    *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
-   *  @param stocks Database column stocks SqlType(float8), Default(None)
+   *  @param developedStocks Database column developed_stocks SqlType(float8), Default(None)
+   *  @param developingStocks Database column developing_stocks SqlType(float8), Default(None)
    *  @param fic Database column fic SqlType(float8), Default(None)
    *  @param mm Database column mm SqlType(float8), Default(None)
    *  @param realestate Database column realestate SqlType(float8), Default(None)
    *  @param otherProperty Database column other_property SqlType(float8), Default(None) */
-  case class AssetclassratioRow(id: Int, name: Option[String] = None, description: Option[String] = None, stocks: Option[Double] = None, fic: Option[Double] = None, mm: Option[Double] = None, realestate: Option[Double] = None, otherProperty: Option[Double] = None)
+  case class AssetclassratioRow(id: Int, name: Option[String] = None, description: Option[String] = None, developedStocks: Option[Double] = None, developingStocks: Option[Double] = None, fic: Option[Double] = None, mm: Option[Double] = None, realestate: Option[Double] = None, otherProperty: Option[Double] = None)
   /** GetResult implicit for fetching AssetclassratioRow objects using plain SQL queries */
   implicit def GetResultAssetclassratioRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[Double]]): GR[AssetclassratioRow] = GR{
     prs => import prs._
-    AssetclassratioRow.tupled((<<[Int], <<?[String], <<?[String], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double]))
+    AssetclassratioRow.tupled((<<[Int], <<?[String], <<?[String], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double]))
   }
   /** Table description of table assetclassratio. Objects of this class serve as prototypes for rows in queries. */
   class Assetclassratio(_tableTag: Tag) extends Table[AssetclassratioRow](_tableTag, "assetclassratio") {
-    def * = (id, name, description, stocks, fic, mm, realestate, otherProperty) <> (AssetclassratioRow.tupled, AssetclassratioRow.unapply)
+    def * = (id, name, description, developedStocks, developingStocks, fic, mm, realestate, otherProperty) <> (AssetclassratioRow.tupled, AssetclassratioRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), name, description, stocks, fic, mm, realestate, otherProperty).shaped.<>({r=>import r._; _1.map(_=> AssetclassratioRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), name, description, developedStocks, developingStocks, fic, mm, realestate, otherProperty).shaped.<>({r=>import r._; _1.map(_=> AssetclassratioRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8, _9)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -127,8 +128,10 @@ trait Tables {
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column description SqlType(varchar), Length(255,true), Default(None) */
     val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
-    /** Database column stocks SqlType(float8), Default(None) */
-    val stocks: Rep[Option[Double]] = column[Option[Double]]("stocks", O.Default(None))
+    /** Database column developed_stocks SqlType(float8), Default(None) */
+    val developedStocks: Rep[Option[Double]] = column[Option[Double]]("developed_stocks", O.Default(None))
+    /** Database column developing_stocks SqlType(float8), Default(None) */
+    val developingStocks: Rep[Option[Double]] = column[Option[Double]]("developing_stocks", O.Default(None))
     /** Database column fic SqlType(float8), Default(None) */
     val fic: Rep[Option[Double]] = column[Option[Double]]("fic", O.Default(None))
     /** Database column mm SqlType(float8), Default(None) */

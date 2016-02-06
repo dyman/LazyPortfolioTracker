@@ -1,36 +1,33 @@
-angular.module('portfolioEdit', []).controller('portfolioEditController',
-		function() {
+angular.module('portfolioEdit', [ 'ui.bootstrap' ]).controller(
+		'portfolioEditController', function() {
 			var portfolio = this;
-			portfolio.todos = [ {
-				text : 'learn angular',
-				done : true
+
+			portfolio.name = 'peters portolio';
+			
+			portfolio.newrecord = {
+				id: 3,
+				date : new Date(),
+				isCollapsed : true,
+				accounts : [ {
+					id : 1,
+					accounttypeid : 1,
+					name: 'account1 name',
+					description : 'this is my first account',
+					defaultcurrency : 'HUF'					
+				} ]
+			};
+
+			portfolio.recordings = [ {
+				id : 1,
+				date : '2016.01.01',
+				isCollapsed : true
+
 			}, {
-				text : 'build an angular app',
-				done : false
+				id: 2,
+				date : '2015.01.01',
+				isCollapsed : true
+
 			} ];
+			
 
-			portfolio.addTodo = function() {
-				portfolio.todos.push({
-					text : portfolio.todoText,
-					done : false
-				});
-				portfolio.todoText = '';
-			};
-
-			portfolio.remaining = function() {
-				var count = 0;
-				angular.forEach(portfolio.todos, function(todo) {
-					count += todo.done ? 0 : 1;
-				});
-				return count;
-			};
-
-			portfolio.archive = function() {
-				var oldTodos = todoList.todos;
-				portfolio.todos = [];
-				angular.forEach(oldTodos, function(todo) {
-					if (!todo.done)
-						portfolio.todos.push(todo);
-				});
-			};
 		});

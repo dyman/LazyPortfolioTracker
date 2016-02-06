@@ -28,7 +28,8 @@ libraryDependencies += "org.webjars" % "bootstrap" % "3.3.6"
 libraryDependencies += "org.webjars" % "font-awesome" % "4.5.0"
 
 libraryDependencies += "org.webjars" % "angularjs" % "1.4.8"
-libraryDependencies += "org.webjars" % "angular-ui-bootstrap" % "0.14.3"
+libraryDependencies += "org.webjars" % "angular-ui-bootstrap" % "1.0.3"
+
 
 
 //mailer plugin
