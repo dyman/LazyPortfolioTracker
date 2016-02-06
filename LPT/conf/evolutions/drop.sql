@@ -1,0 +1,12 @@
+drop table inventory;
+drop table account;
+drop table recording;
+drop table assetclassratio;
+DROP TABLE "quote";
+DROP TABLE "accounttype";
+DROP TABLE "user";
+DROP TABLE "country";
+DROP TABLE "rate";
+DROP TABLE "currency";
+DROP TABLE "registration";
+drop table play_evolutions;
