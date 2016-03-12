@@ -46,7 +46,7 @@ CREATE TABLE account
   
 );
 
-CREATE TABLE inventory
+CREATE TABLE lot
 (
   id serial NOT NULL,
   accountid integer,
@@ -54,20 +54,20 @@ CREATE TABLE inventory
   name character varying(255),
   currency character varying(3),
   amount numeric,
-  CONSTRAINT inventory_pkey PRIMARY KEY (id),
-  CONSTRAINT inventory_assetclassratioid_fkey FOREIGN KEY (assetclassratioid)
+  CONSTRAINT lot_pkey PRIMARY KEY (id),
+  CONSTRAINT lot_assetclassratioid_fkey FOREIGN KEY (assetclassratioid)
       REFERENCES assetclassratio (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT inventory_currency_fkey FOREIGN KEY (currency)
+  CONSTRAINT lot_currency_fkey FOREIGN KEY (currency)
       REFERENCES currency (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT inventory_accountid_fkey FOREIGN KEY (accountid)
+  CONSTRAINT lot_accountid_fkey FOREIGN KEY (accountid)
       REFERENCES account (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 # --- !Downs
-drop table inventory;
+drop table lot;
 drop table account;
 drop table recording;
 drop table assetclassratio;

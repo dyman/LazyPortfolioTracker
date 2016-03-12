@@ -14,53 +14,48 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Array(Account.schema, Accounttype.schema, Assetclassratio.schema, Country.schema, Currency.schema, Inventory.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Recording.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
+  lazy val schema: profile.SchemaDescription = Array(Account.schema, Accounttype.schema, Assetclassratio.schema, Country.schema, Currency.schema, Lot.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Recording.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
   /** Entity class storing rows of table Account
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param accounttypeid Database column accounttypeid SqlType(int4), Default(None)
-   *  @param userid Database column userid SqlType(int4), Default(None)
+   *  @param recordingid Database column recordingid SqlType(int4), Default(None)
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
    *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
-   *  @param defaultcurrency Database column defaultcurrency SqlType(varchar), Length(3,true), Default(None)
-   *  @param assetclassratioid Database column assetclassratioid SqlType(int4), Default(None) */
-  case class AccountRow(id: Int, accounttypeid: Option[Int] = None, userid: Option[Int] = None, name: Option[String] = None, description: Option[String] = None, defaultcurrency: Option[String] = None, assetclassratioid: Option[Int] = None)
+   *  @param defaultcurrency Database column defaultcurrency SqlType(varchar), Length(3,true), Default(None) */
+  case class AccountRow(id: Int, accounttypeid: Option[Int] = None, recordingid: Option[Int] = None, name: Option[String] = None, description: Option[String] = None, defaultcurrency: Option[String] = None)
   /** GetResult implicit for fetching AccountRow objects using plain SQL queries */
   implicit def GetResultAccountRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[String]]): GR[AccountRow] = GR{
     prs => import prs._
-    AccountRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Int]))
+    AccountRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table account. Objects of this class serve as prototypes for rows in queries. */
   class Account(_tableTag: Tag) extends Table[AccountRow](_tableTag, "account") {
-    def * = (id, accounttypeid, userid, name, description, defaultcurrency, assetclassratioid) <> (AccountRow.tupled, AccountRow.unapply)
+    def * = (id, accounttypeid, recordingid, name, description, defaultcurrency) <> (AccountRow.tupled, AccountRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), accounttypeid, userid, name, description, defaultcurrency, assetclassratioid).shaped.<>({r=>import r._; _1.map(_=> AccountRow.tupled((_1.get, _2, _3, _4, _5, _6, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), accounttypeid, recordingid, name, description, defaultcurrency).shaped.<>({r=>import r._; _1.map(_=> AccountRow.tupled((_1.get, _2, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column accounttypeid SqlType(int4), Default(None) */
     val accounttypeid: Rep[Option[Int]] = column[Option[Int]]("accounttypeid", O.Default(None))
-    /** Database column userid SqlType(int4), Default(None) */
-    val userid: Rep[Option[Int]] = column[Option[Int]]("userid", O.Default(None))
+    /** Database column recordingid SqlType(int4), Default(None) */
+    val recordingid: Rep[Option[Int]] = column[Option[Int]]("recordingid", O.Default(None))
     /** Database column name SqlType(varchar), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column description SqlType(varchar), Length(255,true), Default(None) */
     val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
     /** Database column defaultcurrency SqlType(varchar), Length(3,true), Default(None) */
     val defaultcurrency: Rep[Option[String]] = column[Option[String]]("defaultcurrency", O.Length(3,varying=true), O.Default(None))
-    /** Database column assetclassratioid SqlType(int4), Default(None) */
-    val assetclassratioid: Rep[Option[Int]] = column[Option[Int]]("assetclassratioid", O.Default(None))
 
     /** Foreign key referencing Accounttype (database name account_typeid_fkey) */
     lazy val accounttypeFk = foreignKey("account_typeid_fkey", accounttypeid, Accounttype)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing Assetclassratio (database name account_assetclassratioid_fkey) */
-    lazy val assetclassratioFk = foreignKey("account_assetclassratioid_fkey", assetclassratioid, Assetclassratio)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
     /** Foreign key referencing Currency (database name account_defaultcurrency_fkey) */
     lazy val currencyFk = foreignKey("account_defaultcurrency_fkey", defaultcurrency, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing User (database name account_userid_fkey) */
-    lazy val userFk = foreignKey("account_userid_fkey", userid, User)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Recording (database name account_recoringid_fkey) */
+    lazy val recordingFk = foreignKey("account_recoringid_fkey", recordingid, Recording)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
   /** Collection-like TableQuery object for table Account */
   lazy val Account = new TableQuery(tag => new Account(tag))
@@ -199,29 +194,29 @@ trait Tables {
   /** Collection-like TableQuery object for table Currency */
   lazy val Currency = new TableQuery(tag => new Currency(tag))
 
-  /** Entity class storing rows of table Inventory
+  /** Entity class storing rows of table Lot
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
-   *  @param recordingid Database column recordingid SqlType(int4), Default(None)
+   *  @param accountid Database column accountid SqlType(int4), Default(None)
    *  @param assetclassratioid Database column assetclassratioid SqlType(int4), Default(None)
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
    *  @param currency Database column currency SqlType(varchar), Length(3,true), Default(None)
    *  @param amount Database column amount SqlType(numeric), Default(None) */
-  case class InventoryRow(id: Int, recordingid: Option[Int] = None, assetclassratioid: Option[Int] = None, name: Option[String] = None, currency: Option[String] = None, amount: Option[scala.math.BigDecimal] = None)
-  /** GetResult implicit for fetching InventoryRow objects using plain SQL queries */
-  implicit def GetResultInventoryRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[scala.math.BigDecimal]]): GR[InventoryRow] = GR{
+  case class LotRow(id: Int, accountid: Option[Int] = None, assetclassratioid: Option[Int] = None, name: Option[String] = None, currency: Option[String] = None, amount: Option[scala.math.BigDecimal] = None)
+  /** GetResult implicit for fetching LotRow objects using plain SQL queries */
+  implicit def GetResultLotRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[scala.math.BigDecimal]]): GR[LotRow] = GR{
     prs => import prs._
-    InventoryRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[scala.math.BigDecimal]))
+    LotRow.tupled((<<[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[scala.math.BigDecimal]))
   }
-  /** Table description of table inventory. Objects of this class serve as prototypes for rows in queries. */
-  class Inventory(_tableTag: Tag) extends Table[InventoryRow](_tableTag, "inventory") {
-    def * = (id, recordingid, assetclassratioid, name, currency, amount) <> (InventoryRow.tupled, InventoryRow.unapply)
+  /** Table description of table lot. Objects of this class serve as prototypes for rows in queries. */
+  class Lot(_tableTag: Tag) extends Table[LotRow](_tableTag, "lot") {
+    def * = (id, accountid, assetclassratioid, name, currency, amount) <> (LotRow.tupled, LotRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), recordingid, assetclassratioid, name, currency, amount).shaped.<>({r=>import r._; _1.map(_=> InventoryRow.tupled((_1.get, _2, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), accountid, assetclassratioid, name, currency, amount).shaped.<>({r=>import r._; _1.map(_=> LotRow.tupled((_1.get, _2, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
-    /** Database column recordingid SqlType(int4), Default(None) */
-    val recordingid: Rep[Option[Int]] = column[Option[Int]]("recordingid", O.Default(None))
+    /** Database column accountid SqlType(int4), Default(None) */
+    val accountid: Rep[Option[Int]] = column[Option[Int]]("accountid", O.Default(None))
     /** Database column assetclassratioid SqlType(int4), Default(None) */
     val assetclassratioid: Rep[Option[Int]] = column[Option[Int]]("assetclassratioid", O.Default(None))
     /** Database column name SqlType(varchar), Length(255,true), Default(None) */
@@ -231,15 +226,15 @@ trait Tables {
     /** Database column amount SqlType(numeric), Default(None) */
     val amount: Rep[Option[scala.math.BigDecimal]] = column[Option[scala.math.BigDecimal]]("amount", O.Default(None))
 
-    /** Foreign key referencing Assetclassratio (database name inventory_assetclassratioid_fkey) */
-    lazy val assetclassratioFk = foreignKey("inventory_assetclassratioid_fkey", assetclassratioid, Assetclassratio)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing Currency (database name inventory_currency_fkey) */
-    lazy val currencyFk = foreignKey("inventory_currency_fkey", currency, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing Recording (database name inventory_recordingid_fkey) */
-    lazy val recordingFk = foreignKey("inventory_recordingid_fkey", recordingid, Recording)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Account (database name lot_accountid_fkey) */
+    lazy val accountFk = foreignKey("lot_accountid_fkey", accountid, Account)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Assetclassratio (database name lot_assetclassratioid_fkey) */
+    lazy val assetclassratioFk = foreignKey("lot_assetclassratioid_fkey", assetclassratioid, Assetclassratio)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Currency (database name lot_currency_fkey) */
+    lazy val currencyFk = foreignKey("lot_currency_fkey", currency, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
-  /** Collection-like TableQuery object for table Inventory */
-  lazy val Inventory = new TableQuery(tag => new Inventory(tag))
+  /** Collection-like TableQuery object for table Lot */
+  lazy val Lot = new TableQuery(tag => new Lot(tag))
 
   /** Entity class storing rows of table PlayEvolutions
    *  @param id Database column id SqlType(int4), PrimaryKey
@@ -339,9 +334,9 @@ trait Tables {
 
   /** Entity class storing rows of table Recording
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
-   *  @param accountid Database column accountid SqlType(int4), Default(None)
+   *  @param userid Database column userid SqlType(int4), Default(None)
    *  @param ondate Database column ondate SqlType(date), Default(None) */
-  case class RecordingRow(id: Int, accountid: Option[Int] = None, ondate: Option[java.sql.Date] = None)
+  case class RecordingRow(id: Int, userid: Option[Int] = None, ondate: Option[java.sql.Date] = None)
   /** GetResult implicit for fetching RecordingRow objects using plain SQL queries */
   implicit def GetResultRecordingRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[java.sql.Date]]): GR[RecordingRow] = GR{
     prs => import prs._
@@ -349,19 +344,19 @@ trait Tables {
   }
   /** Table description of table recording. Objects of this class serve as prototypes for rows in queries. */
   class Recording(_tableTag: Tag) extends Table[RecordingRow](_tableTag, "recording") {
-    def * = (id, accountid, ondate) <> (RecordingRow.tupled, RecordingRow.unapply)
+    def * = (id, userid, ondate) <> (RecordingRow.tupled, RecordingRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), accountid, ondate).shaped.<>({r=>import r._; _1.map(_=> RecordingRow.tupled((_1.get, _2, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), userid, ondate).shaped.<>({r=>import r._; _1.map(_=> RecordingRow.tupled((_1.get, _2, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
-    /** Database column accountid SqlType(int4), Default(None) */
-    val accountid: Rep[Option[Int]] = column[Option[Int]]("accountid", O.Default(None))
+    /** Database column userid SqlType(int4), Default(None) */
+    val userid: Rep[Option[Int]] = column[Option[Int]]("userid", O.Default(None))
     /** Database column ondate SqlType(date), Default(None) */
     val ondate: Rep[Option[java.sql.Date]] = column[Option[java.sql.Date]]("ondate", O.Default(None))
 
-    /** Foreign key referencing Account (database name recording_accountid_fkey) */
-    lazy val accountFk = foreignKey("recording_accountid_fkey", accountid, Account)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing User (database name recording_userid_fkey) */
+    lazy val userFk = foreignKey("recording_userid_fkey", userid, User)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
   /** Collection-like TableQuery object for table Recording */
   lazy val Recording = new TableQuery(tag => new Recording(tag))
