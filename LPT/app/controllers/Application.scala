@@ -6,7 +6,6 @@ import models.LoginData
 import models.RegistrationData
 import models.UserData
 import models.db.defaultDb.getCachesQuotes
-
 import play.Logger
 import play.api.data.Form
 import play.api.data.Forms.mapping
@@ -27,6 +26,7 @@ import play.api.libs.functional.syntax._
 import models.utils.mailer.Mailer
 import models.db.defaultDb
 import play.api.libs.json.Writes.dateWrites
+import scala.concurrent.Future
 
 class Application @Inject() (mailer: Mailer) extends Controller with LazyPortfolio {
 
@@ -45,22 +45,30 @@ class Application @Inject() (mailer: Mailer) extends Controller with LazyPortfol
       }
   }
 
-  implicit val customDateWrites: Writes[java.util.Date] = dateWrites("yyyy-MM-dd")
+  
+  //implicit val customDateWrites: Writes[java.util.Date] = dateWrites("yyyy-MM-dd")
+  
   implicit val recordingsWrites: Writes[RecordingRow] = (
     (JsPath \ "id").write[Int] and
     (JsPath \ "userid").write[Int] and
-    (JsPath \ "date").write[Option[java.util.Date]])(unlift(RecordingRow.unapply))
+    (JsPath \ "ondate").write[Option[java.util.Date]])(unlift(RecordingRow.unapply))
 
+  
+    
   def recordings = Action.async {
     request =>
       {
-        val profile = getProfile(request)
-        val recordings = defaultDb.getRecordings(profile)
-        recordings.map(x => {
-          val json = Json.toJson(x)
-          Logger.debug(Json.prettyPrint(json))
-          Ok(json)
-        })
+        if (isAuthenticated(request)) {
+          val profile = getProfile(request)
+          val recordings = defaultDb.getRecordings(profile)
+          recordings.map(x => {
+            val json = Json.toJson(x)
+            Logger.debug(Json.prettyPrint(json))
+            Ok(json)
+          })
+        } else {
+          notAuthenticated
+        }
       }
   }
 

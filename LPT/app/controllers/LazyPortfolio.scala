@@ -1,19 +1,17 @@
 package controllers
 
 import scala.annotation.implicitNotFound
-
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.core.profile.ProfileManager
 import org.pac4j.http.client.indirect.FormClient
 import org.pac4j.play.PlayWebContext
 import org.pac4j.play.scala.Security
-
 import models.UserData
-
 import play.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.Action
 import play.api.mvc.RequestHeader
+import scala.concurrent.Future
 
 trait LazyPortfolio extends Security[CommonProfile] {
   def getProfile(request: RequestHeader) = {
@@ -38,5 +36,8 @@ trait LazyPortfolio extends Security[CommonProfile] {
     new UserData(false, "no email", urlForm.getCallbackUrl)
   }
 
-  
+  val notAuthenticated = Future {
+    InternalServerError("not authenticated")
+  }
+
 }

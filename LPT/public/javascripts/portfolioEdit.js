@@ -6,10 +6,10 @@ angular.module('portfolioEdit', [ 'ui.bootstrap' ]).controller(
 
 			$http.get("recordings").then(function(response) {
 				portfolio.recordings = response.data;
-				portfolio.recordings.push({
-					id : 5,
-					date : '2013.01.01'					
-				})
+				portfolio.recordings.forEach(function(entry) {
+				    console.log(entry);
+				    entry.date = new Date(entry.ondate)
+				});				
 			}, function(response) {
 				portfolio.error = "Something went wrong";
 			});

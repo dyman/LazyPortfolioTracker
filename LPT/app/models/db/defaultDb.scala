@@ -23,6 +23,7 @@ import models.db.Tables.Registration
 import models.db.Tables.RegistrationRow
 import models.db.Tables.Recording
 import org.pac4j.core.profile.CommonProfile
+import models.db.Tables.Account
 
 object defaultDb {
 
@@ -162,29 +163,39 @@ object defaultDb {
   }
 
   def getRecordings(profile: CommonProfile): Future[Seq[Tables.RecordingRow]] = {
-    var email = profile.getEmail;
-    //val user = getUserByEmail(email)._1
-    //if (user.isDefined) {
-      Logger.debug("get recordings for: {}", profile.getId)
-      val recordings = for (r <- Recording) yield r
-      val rec = recordings.filter { _.userid === profile.getId.toInt }
-      val ret = myDb.run(rec.result)
-      //
-      ret.onComplete({
-        case Success(ret) => {
-          Logger.debug(ret.toString())
-        }
-        case Failure(exception) => {
-          Logger.debug("db user query failed " + exception.toString())
+    Logger.debug("get recordings for: {}", profile.getId)
+    val recordings = for (r <- Recording) yield r
+    val rec = recordings.filter { _.userid === profile.getId.toInt }
+    val ret = myDb.run(rec.result)
 
-        }
-      })
-      ret
-//    } else {
-//      Future {
-//        List[Tables.RecordingRow]()
-//      }
-//    }
+    ret.onComplete({
+      case Success(ret) => {
+        Logger.debug(ret.toString())
+      }
+      case Failure(exception) => {
+        Logger.debug("db recording query failed " + exception.toString())
 
+      }
+    })
+    ret
   }
+
+  def getAccountsForRecording(recordingId: Int) = {
+    Logger.debug("get accounts for recording: {}", recordingId.toString)
+    val account = for (a <- Account) yield a
+    val aQuery = account.filter { _.recordingid === recordingId }
+
+    val ret = myDb.run(aQuery.result)
+    ret.onComplete({
+      case Success(ret) => {
+        Logger.debug(ret.toString())
+      }
+      case Failure(exception) => {
+        Logger.debug("db account query failed " + exception.toString())
+
+      }
+    })
+    ret
+  }
+
 }
