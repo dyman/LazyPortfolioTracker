@@ -16,7 +16,7 @@ CREATE TABLE assetclassratio
 CREATE TABLE recording
 (
   id serial NOT NULL,
-  userid integer,
+  userid integer NOT NULL,
   ondate date,
   CONSTRAINT recording_pkey PRIMARY KEY (id),
   CONSTRAINT recording_userid_fkey FOREIGN KEY (userid)

@@ -1,4 +1,4 @@
-package utils.mailer
+package models.utils.mailer
 
 import models.Message
 import play.api.libs.mailer.Email

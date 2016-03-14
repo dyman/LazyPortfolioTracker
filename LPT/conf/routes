@@ -4,18 +4,23 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET 	/facebook					controllers.Application.facebook
-GET		/google						controllers.Application.google
+
+#login
+GET 	/facebook					controllers.login.LoginSocial.facebook
+GET		/google						controllers.login.LoginSocial.google
+GET		/reg						controllers.login.LoginForm.reg
+POST	/reg						controllers.login.LoginForm.reg
+GET		/register					controllers.login.LoginForm.register
+POST	/register					controllers.login.LoginForm.register
+GET		/confirm/*id				controllers.login.LoginForm.confirm(id)
+
+
+
 GET		/quote						controllers.Application.quote
-GET		/reg						controllers.Application.reg
-POST	/reg						controllers.Application.reg
-
-GET		/register					controllers.Application.register
-POST	/register					controllers.Application.register
-
-GET		/confirm/*id					controllers.Application.confirm(id)
 
 
+#portfolio
+GET  	/recordings               	controllers.Application.recordings
 
 
 
