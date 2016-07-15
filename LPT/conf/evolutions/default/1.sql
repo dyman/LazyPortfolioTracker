@@ -125,10 +125,11 @@ INSERT INTO accounttype (id, name, countryid, description, url) VALUES (6, 'NYES
 INSERT INTO accounttype (id, name, countryid, description, url) VALUES (7, 'NYB', 1, 'nyugdíj biztosítás', NULL);
 
 # --- !Downs
-DROP TABLE "accounttype";
-DROP TABLE "user";
-DROP TABLE "country";
-DROP TABLE "rate";
-DROP TABLE "currency";
-DROP TABLE "registration";
+DROP TABLE "accounttype" CASCADE;
+DROP TABLE "user" CASCADE;
+DROP TABLE "country" CASCADE;
+DROP TABLE "rate" CASCADE;
+DROP TABLE "currency" CASCADE;
+DROP TABLE "registration" CASCADE;
+
 

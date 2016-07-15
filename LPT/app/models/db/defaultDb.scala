@@ -24,6 +24,8 @@ import models.db.Tables.RegistrationRow
 import models.db.Tables.Recording
 import org.pac4j.core.profile.CommonProfile
 import models.db.Tables.Account
+import java.sql.Date
+import models.db.Tables.RecordingRow
 
 object defaultDb {
 
@@ -178,6 +180,15 @@ object defaultDb {
       }
     })
     ret
+  }
+
+  case class RecordingJson(id: Int, date: Date)
+  def saveRecording(profile: CommonProfile, rec: RecordingJson) {
+    Logger.debug("save recording for: {} on date: {}", profile.getId, rec.toString())
+    val recQueries: TableQuery[Recording] = TableQuery[Recording]
+    val newRecording: RecordingRow = new RecordingRow(0, profile.getId.toInt, Some(rec.date))
+    val insertAction: DBIO[Int] = (recQueries returning recQueries.map(x => x.id)) += newRecording
+    myDb.run(insertAction)
   }
 
   def getAccountsForRecording(recordingId: Int) = {

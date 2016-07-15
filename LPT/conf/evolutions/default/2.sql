@@ -112,4 +112,4 @@ INSERT INTO quote VALUES (100, 'The best thing money can buy is financial freedo
 
 
 # --- !Downs
-DROP TABLE "quote";
+DROP TABLE "quote" CASCADE;

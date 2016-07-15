@@ -1,7 +1,8 @@
 # --- !Ups
-CREATE TABLE assetclassratio
+CREATE TABLE instrument
 (
   id serial NOT NULL,
+  isin character varying(12),
   name character varying(255),
   description character varying(255),
   developed_stocks double precision,
@@ -10,7 +11,7 @@ CREATE TABLE assetclassratio
   mm double precision,
   realestate double precision,
   other_property double precision,
-  CONSTRAINT assetclassratio_pkey PRIMARY KEY (id)
+  CONSTRAINT instrument_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE recording
@@ -50,13 +51,13 @@ CREATE TABLE lot
 (
   id serial NOT NULL,
   accountid integer,
-  assetclassratioid integer,
+  instrumentid integer,
   name character varying(255),
   currency character varying(3),
   amount numeric,
   CONSTRAINT lot_pkey PRIMARY KEY (id),
-  CONSTRAINT lot_assetclassratioid_fkey FOREIGN KEY (assetclassratioid)
-      REFERENCES assetclassratio (id) MATCH SIMPLE
+  CONSTRAINT lot_instrumentid_fkey FOREIGN KEY (instrumentid)
+      REFERENCES instrument (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT lot_currency_fkey FOREIGN KEY (currency)
       REFERENCES currency (id) MATCH SIMPLE
@@ -67,9 +68,9 @@ CREATE TABLE lot
 );
 
 # --- !Downs
-drop table lot;
-drop table account;
-drop table recording;
-drop table assetclassratio;
+drop table lot CASCADE;
+drop table account CASCADE;
+drop table recording CASCADE;
+drop table instrument CASCADE;
 
 

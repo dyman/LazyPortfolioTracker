@@ -8,7 +8,8 @@ angular.module('portfolioEdit', [ 'ui.bootstrap' ]).controller(
 				portfolio.recordings = response.data;
 				portfolio.recordings.forEach(function(entry) {
 				    console.log(entry);
-				    entry.date = new Date(entry.ondate)
+				    entry.date = new Date(entry.ondate);
+				    entry.isCollapsed = true;
 				});				
 			}, function(response) {
 				portfolio.error = "Something went wrong";

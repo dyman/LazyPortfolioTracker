@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = Array(Account.schema, Accounttype.schema, Assetclassratio.schema, Country.schema, Currency.schema, Lot.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Recording.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
+  lazy val schema: profile.SchemaDescription = Array(Account.schema, Accounttype.schema, Country.schema, Currency.schema, Instrument.schema, Lot.schema, PlayEvolutions.schema, Quote.schema, Rate.schema, Recording.schema, Registration.schema, User.schema).reduceLeft(_ ++ _)
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -95,50 +95,6 @@ trait Tables {
   /** Collection-like TableQuery object for table Accounttype */
   lazy val Accounttype = new TableQuery(tag => new Accounttype(tag))
 
-  /** Entity class storing rows of table Assetclassratio
-   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
-   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
-   *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
-   *  @param developedStocks Database column developed_stocks SqlType(float8), Default(None)
-   *  @param developingStocks Database column developing_stocks SqlType(float8), Default(None)
-   *  @param fic Database column fic SqlType(float8), Default(None)
-   *  @param mm Database column mm SqlType(float8), Default(None)
-   *  @param realestate Database column realestate SqlType(float8), Default(None)
-   *  @param otherProperty Database column other_property SqlType(float8), Default(None) */
-  case class AssetclassratioRow(id: Int, name: Option[String] = None, description: Option[String] = None, developedStocks: Option[Double] = None, developingStocks: Option[Double] = None, fic: Option[Double] = None, mm: Option[Double] = None, realestate: Option[Double] = None, otherProperty: Option[Double] = None)
-  /** GetResult implicit for fetching AssetclassratioRow objects using plain SQL queries */
-  implicit def GetResultAssetclassratioRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[Double]]): GR[AssetclassratioRow] = GR{
-    prs => import prs._
-    AssetclassratioRow.tupled((<<[Int], <<?[String], <<?[String], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double]))
-  }
-  /** Table description of table assetclassratio. Objects of this class serve as prototypes for rows in queries. */
-  class Assetclassratio(_tableTag: Tag) extends Table[AssetclassratioRow](_tableTag, "assetclassratio") {
-    def * = (id, name, description, developedStocks, developingStocks, fic, mm, realestate, otherProperty) <> (AssetclassratioRow.tupled, AssetclassratioRow.unapply)
-    /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), name, description, developedStocks, developingStocks, fic, mm, realestate, otherProperty).shaped.<>({r=>import r._; _1.map(_=> AssetclassratioRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8, _9)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
-
-    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
-    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
-    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
-    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
-    /** Database column description SqlType(varchar), Length(255,true), Default(None) */
-    val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
-    /** Database column developed_stocks SqlType(float8), Default(None) */
-    val developedStocks: Rep[Option[Double]] = column[Option[Double]]("developed_stocks", O.Default(None))
-    /** Database column developing_stocks SqlType(float8), Default(None) */
-    val developingStocks: Rep[Option[Double]] = column[Option[Double]]("developing_stocks", O.Default(None))
-    /** Database column fic SqlType(float8), Default(None) */
-    val fic: Rep[Option[Double]] = column[Option[Double]]("fic", O.Default(None))
-    /** Database column mm SqlType(float8), Default(None) */
-    val mm: Rep[Option[Double]] = column[Option[Double]]("mm", O.Default(None))
-    /** Database column realestate SqlType(float8), Default(None) */
-    val realestate: Rep[Option[Double]] = column[Option[Double]]("realestate", O.Default(None))
-    /** Database column other_property SqlType(float8), Default(None) */
-    val otherProperty: Rep[Option[Double]] = column[Option[Double]]("other_property", O.Default(None))
-  }
-  /** Collection-like TableQuery object for table Assetclassratio */
-  lazy val Assetclassratio = new TableQuery(tag => new Assetclassratio(tag))
-
   /** Entity class storing rows of table Country
    *  @param id Database column id SqlType(int2), PrimaryKey
    *  @param code Database column code SqlType(varchar), Length(10,true), Default(None)
@@ -194,14 +150,61 @@ trait Tables {
   /** Collection-like TableQuery object for table Currency */
   lazy val Currency = new TableQuery(tag => new Currency(tag))
 
+  /** Entity class storing rows of table Instrument
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param isin Database column isin SqlType(varchar), Length(12,true), Default(None)
+   *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
+   *  @param description Database column description SqlType(varchar), Length(255,true), Default(None)
+   *  @param developedStocks Database column developed_stocks SqlType(float8), Default(None)
+   *  @param developingStocks Database column developing_stocks SqlType(float8), Default(None)
+   *  @param fic Database column fic SqlType(float8), Default(None)
+   *  @param mm Database column mm SqlType(float8), Default(None)
+   *  @param realestate Database column realestate SqlType(float8), Default(None)
+   *  @param otherProperty Database column other_property SqlType(float8), Default(None) */
+  case class InstrumentRow(id: Int, isin: Option[String] = None, name: Option[String] = None, description: Option[String] = None, developedStocks: Option[Double] = None, developingStocks: Option[Double] = None, fic: Option[Double] = None, mm: Option[Double] = None, realestate: Option[Double] = None, otherProperty: Option[Double] = None)
+  /** GetResult implicit for fetching InstrumentRow objects using plain SQL queries */
+  implicit def GetResultInstrumentRow(implicit e0: GR[Int], e1: GR[Option[String]], e2: GR[Option[Double]]): GR[InstrumentRow] = GR{
+    prs => import prs._
+    InstrumentRow.tupled((<<[Int], <<?[String], <<?[String], <<?[String], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double], <<?[Double]))
+  }
+  /** Table description of table instrument. Objects of this class serve as prototypes for rows in queries. */
+  class Instrument(_tableTag: Tag) extends Table[InstrumentRow](_tableTag, "instrument") {
+    def * = (id, isin, name, description, developedStocks, developingStocks, fic, mm, realestate, otherProperty) <> (InstrumentRow.tupled, InstrumentRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = (Rep.Some(id), isin, name, description, developedStocks, developingStocks, fic, mm, realestate, otherProperty).shaped.<>({r=>import r._; _1.map(_=> InstrumentRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column isin SqlType(varchar), Length(12,true), Default(None) */
+    val isin: Rep[Option[String]] = column[Option[String]]("isin", O.Length(12,varying=true), O.Default(None))
+    /** Database column name SqlType(varchar), Length(255,true), Default(None) */
+    val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
+    /** Database column description SqlType(varchar), Length(255,true), Default(None) */
+    val description: Rep[Option[String]] = column[Option[String]]("description", O.Length(255,varying=true), O.Default(None))
+    /** Database column developed_stocks SqlType(float8), Default(None) */
+    val developedStocks: Rep[Option[Double]] = column[Option[Double]]("developed_stocks", O.Default(None))
+    /** Database column developing_stocks SqlType(float8), Default(None) */
+    val developingStocks: Rep[Option[Double]] = column[Option[Double]]("developing_stocks", O.Default(None))
+    /** Database column fic SqlType(float8), Default(None) */
+    val fic: Rep[Option[Double]] = column[Option[Double]]("fic", O.Default(None))
+    /** Database column mm SqlType(float8), Default(None) */
+    val mm: Rep[Option[Double]] = column[Option[Double]]("mm", O.Default(None))
+    /** Database column realestate SqlType(float8), Default(None) */
+    val realestate: Rep[Option[Double]] = column[Option[Double]]("realestate", O.Default(None))
+    /** Database column other_property SqlType(float8), Default(None) */
+    val otherProperty: Rep[Option[Double]] = column[Option[Double]]("other_property", O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Instrument */
+  lazy val Instrument = new TableQuery(tag => new Instrument(tag))
+
   /** Entity class storing rows of table Lot
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param accountid Database column accountid SqlType(int4), Default(None)
-   *  @param assetclassratioid Database column assetclassratioid SqlType(int4), Default(None)
+   *  @param instrumentid Database column instrumentid SqlType(int4), Default(None)
    *  @param name Database column name SqlType(varchar), Length(255,true), Default(None)
    *  @param currency Database column currency SqlType(varchar), Length(3,true), Default(None)
    *  @param amount Database column amount SqlType(numeric), Default(None) */
-  case class LotRow(id: Int, accountid: Option[Int] = None, assetclassratioid: Option[Int] = None, name: Option[String] = None, currency: Option[String] = None, amount: Option[scala.math.BigDecimal] = None)
+  case class LotRow(id: Int, accountid: Option[Int] = None, instrumentid: Option[Int] = None, name: Option[String] = None, currency: Option[String] = None, amount: Option[scala.math.BigDecimal] = None)
   /** GetResult implicit for fetching LotRow objects using plain SQL queries */
   implicit def GetResultLotRow(implicit e0: GR[Int], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[scala.math.BigDecimal]]): GR[LotRow] = GR{
     prs => import prs._
@@ -209,16 +212,16 @@ trait Tables {
   }
   /** Table description of table lot. Objects of this class serve as prototypes for rows in queries. */
   class Lot(_tableTag: Tag) extends Table[LotRow](_tableTag, "lot") {
-    def * = (id, accountid, assetclassratioid, name, currency, amount) <> (LotRow.tupled, LotRow.unapply)
+    def * = (id, accountid, instrumentid, name, currency, amount) <> (LotRow.tupled, LotRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), accountid, assetclassratioid, name, currency, amount).shaped.<>({r=>import r._; _1.map(_=> LotRow.tupled((_1.get, _2, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), accountid, instrumentid, name, currency, amount).shaped.<>({r=>import r._; _1.map(_=> LotRow.tupled((_1.get, _2, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column accountid SqlType(int4), Default(None) */
     val accountid: Rep[Option[Int]] = column[Option[Int]]("accountid", O.Default(None))
-    /** Database column assetclassratioid SqlType(int4), Default(None) */
-    val assetclassratioid: Rep[Option[Int]] = column[Option[Int]]("assetclassratioid", O.Default(None))
+    /** Database column instrumentid SqlType(int4), Default(None) */
+    val instrumentid: Rep[Option[Int]] = column[Option[Int]]("instrumentid", O.Default(None))
     /** Database column name SqlType(varchar), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column currency SqlType(varchar), Length(3,true), Default(None) */
@@ -228,10 +231,10 @@ trait Tables {
 
     /** Foreign key referencing Account (database name lot_accountid_fkey) */
     lazy val accountFk = foreignKey("lot_accountid_fkey", accountid, Account)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing Assetclassratio (database name lot_assetclassratioid_fkey) */
-    lazy val assetclassratioFk = foreignKey("lot_assetclassratioid_fkey", assetclassratioid, Assetclassratio)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
     /** Foreign key referencing Currency (database name lot_currency_fkey) */
     lazy val currencyFk = foreignKey("lot_currency_fkey", currency, Currency)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Instrument (database name lot_instrumentid_fkey) */
+    lazy val instrumentFk = foreignKey("lot_instrumentid_fkey", instrumentid, Instrument)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
   /** Collection-like TableQuery object for table Lot */
   lazy val Lot = new TableQuery(tag => new Lot(tag))
