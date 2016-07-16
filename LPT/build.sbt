@@ -2,9 +2,6 @@ name := """LPT"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
-
-scalaVersion := "2.11.7"
 //jdbc,
 libraryDependencies ++= Seq(  
   cache,
@@ -15,6 +12,54 @@ libraryDependencies ++= Seq(
 //slick
 libraryDependencies += "com.typesafe.play" %% "play-slick" % "1.1.1"
 libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1"
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala).  
+  settings(
+    dbTask := {
+      println("starting from root...")
+      val url = s"jdbc:postgresql://127.0.0.1:5432/FAS" // adapt as necessary to your system
+      val jdbcDriver = "slick.driver.PostgresDriver"         // replace if not Postgre
+      val slickDriver = "org.postgresql.Driver"     // replace if not Postgre
+      (runner in Compile).value.run("slick.codegen.SourceCodeGenerator", 
+      (dependencyClasspath in Compile).value.files, 
+      Array(jdbcDriver, slickDriver, 
+      url, "app/", "models.db", "FAS", "FAS"), streams.value.log)
+  
+      //slick.codegen.SourceCodeGenerator.main(Array("slick.driver.PostgresDriver",
+      //"org.postgresql.Driver",
+      //"jdbc:postgresql://127.0.0.1:5432/FAS", 
+      //"app/",
+      //"models.db", "FAS", "FAS"))
+      
+      "created"
+    }
+  )
+  
+  
+lazy val slickGenerate = taskKey[String]("slick code generation from an existing database")
+  //taskKey[Seq[File]]("slick code generation from an existing database")
+
+slickGenerate := {
+  val url = s"jdbc:postgresql://127.0.0.1:5432/FAS" // adapt as necessary to your system
+  val jdbcDriver = "slick.driver.PostgresDriver"         // replace if not Postgre
+  val slickDriver = "org.postgresql.Driver"     // replace if not Postgre
+    (runner in Compile).value.run("slick.codegen.SourceCodeGenerator", (dependencyClasspath in Compile).value.files, Array(jdbcDriver, slickDriver, url, "app/", "models.db", "FAS", "FAS"), streams.value.log)
+  "done"
+  
+}
+  
+lazy val util = (project in file("util")).dependsOn(root).
+  settings(
+    dbTask := {
+      println("starting from util...")
+      
+      "created"
+    }
+  )
+  
+
+scalaVersion := "2.11.7"
+
 //libraryDependencies += "com.typesafe.play" % "play-slick_2.11" % "2.0.0"
 //libraryDependencies += "com.typesafe.play" % "play-slick-evolutions_2.11" % "2.0.0"
 
@@ -67,4 +112,29 @@ routesGenerator := InjectedRoutesGenerator
 
 
 EclipseKeys.withSource := true
+
+
+
+val intTask = TaskKey[Int]("int-task")
+
+intTask := 1 + 2
+
+val sampleTask = TaskKey[Int]("sample-task")
+
+sampleTask := {
+   val sum = 1 + 2
+   println("sum: " + sum)
+   sum
+}
+
+val dbTask = TaskKey[String]("db-task")
+
+//dbTask := {
+//  slick.codegen.SourceCodeGenerator.main(Array("slick.driver.PostgresDriver",
+//    "org.postgresql.Driver",
+//    "jdbc:postgresql://127.0.0.1:5432/FAS", 
+//    "app/",
+//    "models.db", "FAS", "FAS")) 
+//}
+
 
