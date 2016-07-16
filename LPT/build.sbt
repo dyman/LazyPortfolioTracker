@@ -1,17 +1,7 @@
 name := """LPT"""
 
-version := "1.0-SNAPSHOT"
+version := "1.0-beta"
 
-//jdbc,
-libraryDependencies ++= Seq(  
-  cache,
-  ws,
-  specs2 % Test
-)
-
-//slick
-libraryDependencies += "com.typesafe.play" %% "play-slick" % "1.1.1"
-libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala).  
   settings(
@@ -23,14 +13,9 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).
       (runner in Compile).value.run("slick.codegen.SourceCodeGenerator", 
       (dependencyClasspath in Compile).value.files, 
       Array(jdbcDriver, slickDriver, 
-      url, "app/", "models.db", "FAS", "FAS"), streams.value.log)
-  
-      //slick.codegen.SourceCodeGenerator.main(Array("slick.driver.PostgresDriver",
-      //"org.postgresql.Driver",
-      //"jdbc:postgresql://127.0.0.1:5432/FAS", 
-      //"app/",
-      //"models.db", "FAS", "FAS"))
+      url, "app/", "models.db", "FAS", "FAS"), streams.value.log) 
       
+      println("db files have been created...")
       "created"
     }
   )
@@ -58,7 +43,19 @@ lazy val util = (project in file("util")).dependsOn(root).
   )
   
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
+
+//jdbc,
+libraryDependencies ++= Seq(  
+  cache,
+  ws,
+  specs2 % Test
+)
+
+//slick
+libraryDependencies += "com.typesafe.play" %% "play-slick" % "1.1.1"
+libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1"
+
 
 //libraryDependencies += "com.typesafe.play" % "play-slick_2.11" % "2.0.0"
 //libraryDependencies += "com.typesafe.play" % "play-slick-evolutions_2.11" % "2.0.0"
