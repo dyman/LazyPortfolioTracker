@@ -1,0 +1,19 @@
+@(message: Message)
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	Thank you for registering on LazyPortfolioTracker.com! Please confirm
+	your email address by clicking this url
+	<a href="http://192.168.0.10:9000/confirm/@message.code">http://192.168.0.10:9000/confirm/@message.code</a>
+	
+	<br>
+	<br>
+	Lazy Portfolio Tracker
+	<br>
+	<img src="cid:@message.cid">
+
+</body>
+</html>
