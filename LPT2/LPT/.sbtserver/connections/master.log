@@ -1,0 +1,43 @@
+New log file opened at Sat Sep 10 20:45:14 CEST 2016 by 22796@grefa
+Taking next connection to: 40445
+New client attempting to connect on port: 39292-40445
+  Address = /127.0.1.1:40445
+This client on port 39292 has uuid 52ea40a6-7094-4290-bf36-9656b11b965e configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-52ea40a6-7094-4290-bf36-9656b11b965e
+Taking next connection to: 40445
+New client attempting to connect on port: 39306-40445
+  Address = /127.0.1.1:40445
+Handshake exception on socket: 39306
+sbt.impl.ipc.HandshakeException: Unable to perform handshake
+	at sbt.impl.ipc.Peer.handshake(IPC.scala:46)
+	at sbt.impl.ipc.MultiClientServer.<init>(IPC.scala:150)
+	at sbt.server.SbtServerSocketHandler$$anon$1.run(SbtServerSocketHandler.scala:43)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at sbt.impl.ipc.Peer.receive(IPC.scala:95)
+	at sbt.impl.ipc.Peer.handshake(IPC.scala:49)
+	... 2 more
+Taking next connection to: 40445
+New client attempting to connect on port: 39308-40445
+  Address = /127.0.1.1:40445
+This client on port 39308 has uuid cbe8cc79-f595-4509-813e-acf76bd31e00 configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-52ea40a6-7094-4290-bf36-9656b11b965e, activator-cbe8cc79-f595-4509-813e-acf76bd31e00
+Taking next connection to: 40445
+New client attempting to connect on port: 39866-40445
+  Address = /127.0.1.1:40445
+Handshake exception on socket: 39866
+sbt.impl.ipc.HandshakeException: Unable to perform handshake
+	at sbt.impl.ipc.Peer.handshake(IPC.scala:46)
+	at sbt.impl.ipc.MultiClientServer.<init>(IPC.scala:150)
+	at sbt.server.SbtServerSocketHandler$$anon$1.run(SbtServerSocketHandler.scala:43)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at sbt.impl.ipc.Peer.receive(IPC.scala:95)
+	at sbt.impl.ipc.Peer.handshake(IPC.scala:49)
+	... 2 more
+Taking next connection to: 40445
+New client attempting to connect on port: 39868-40445
+  Address = /127.0.1.1:40445
+This client on port 39868 has uuid 20224ed0-5d08-423e-bddd-fbefe18d772a configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-52ea40a6-7094-4290-bf36-9656b11b965e, activator-cbe8cc79-f595-4509-813e-acf76bd31e00, activator-20224ed0-5d08-423e-bddd-fbefe18d772a
+Taking next connection to: 40445

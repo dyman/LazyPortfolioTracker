@@ -1,0 +1,21 @@
+@(user:models.UserData) @if(user.loggedIn){
+<div class="navbar-right">
+	<span class="navbar-brand">@user.email</span> <a href="/logout?url=/" class="navbar-brand">logout</a>
+</div>
+}else{
+<form class="navbar-form navbar-right" action="@user.form" method="POST">
+
+	<div class="form-group">
+		<input type="text" placeholder="Email address" class="form-control" name="username" autofocus>
+	</div>
+	<div class="form-group">
+		<input type="password" placeholder="Password" class="form-control" name="password">
+	</div>
+	<button type="submit" class="btn btn-success">Sign in or register</button>
+	<a href="/google" class="btn btn-social-icon btn-google"> <span
+		class="fa fa-google"></span>
+	</a> <a href="/facebook" class="btn btn-social-icon btn-facebook"> <span
+		class="fa fa-facebook"></span>
+	</a>	
+</form>
+}
