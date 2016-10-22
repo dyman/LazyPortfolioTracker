@@ -1,8 +1,9 @@
 logs
 target
-/.idea
-/.idea_modules
+.idea
 /.classpath
 /.project
 /.settings
 /RUNNING_PID
+node_modules
+npm-debug.log
