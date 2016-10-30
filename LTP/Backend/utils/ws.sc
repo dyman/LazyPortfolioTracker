@@ -1,12 +1,10 @@
 import slick._
 
-println("alma")
-
 println ("util main program!")
 
 
 codegen.SourceCodeGenerator.main (Array ("slick.driver.PostgresDriver",
   "org.postgresql.Driver",
-  "jdbc:postgresql://192.168.0.20:5432/LPT",
-  "",
+  "jdbc:postgresql://mandy:5432/LPT",
+  "/home/peter/Programming/LazyPortfolioTracker/LTP/Backend/app/",
   "models.db", "FAS", "FAS") )

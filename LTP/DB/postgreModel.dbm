@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.2" last-position="45,22" last-zoom="1.05"
+	 default-schema="public" default-owner="postgres">
+<role name="FAS"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<database name="LPT" encoding="UTF8" lc-collate="en_US" lc-ctype="en_US">
+	<role name="&quot;FAS&quot;"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="play_evolutions">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="60" y="60"/>
+	<column name="id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="hash" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="applied_at" not-null="true">
+		<type name="timestamp"/>
+	</column>
+	<column name="apply_script">
+		<type name="text"/>
+	</column>
+	<column name="revert_script">
+		<type name="text"/>
+	</column>
+	<column name="state">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="last_problem">
+		<type name="text"/>
+	</column>
+	<constraint name="play_evolutions_pkey" type="pk-constr" table="public.play_evolutions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="currency">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="400" y="60"/>
+	<column name="id" not-null="true">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="currency_pkey" type="pk-constr" table="public.currency">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="rate_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="rate">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="700" y="60"/>
+	<column name="id" not-null="true" sequence="public.rate_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="currencyid">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ondate">
+		<type name="date"/>
+	</column>
+	<column name="rate">
+		<type name="numeric"/>
+	</column>
+	<constraint name="rate_pkey" type="pk-constr" table="public.rate">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="country">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="1020" y="60"/>
+	<column name="id" not-null="true">
+		<type name="smallint"/>
+	</column>
+	<column name="code">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="currency">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="country_pkey" type="pk-constr" table="public.country">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="user_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="user">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="1360" y="60"/>
+	<column name="id" not-null="true" sequence="public.user_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="password">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="lastactivity" not-null="true">
+		<type name="timestamp"/>
+	</column>
+	<column name="isadmin">
+		<type name="boolean"/>
+	</column>
+	<column name="lastlogin">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="user_pkey" type="pk-constr" table="public.&quot;user&quot;">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="email_uniqe" type="uq-constr" table="public.&quot;user&quot;">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="registration">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="60" y="220"/>
+	<column name="id" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="ondate" not-null="true">
+		<type name="timestamp"/>
+	</column>
+	<column name="confirmed">
+		<type name="boolean"/>
+	</column>
+	<constraint name="registration_pkey" type="pk-constr" table="public.registration">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="accounttype_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="accounttype">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="380" y="220"/>
+	<column name="id" not-null="true" sequence="public.accounttype_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="countryid" not-null="true">
+		<type name="smallint"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="url">
+		<type name="character varying" length="255" dimension="1"/>
+	</column>
+	<constraint name="accounttype_pkey" type="pk-constr" table="public.accounttype">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="quote_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="quote">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="760" y="220"/>
+	<column name="id" not-null="true" sequence="public.quote_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="quote" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="author" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="quote_pg_key" type="pk-constr" table="public.quote">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="instrument_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="instrument">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="1200" y="440"/>
+	<column name="id" not-null="true" sequence="public.instrument_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="isin">
+		<type name="character varying" length="12"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="developed_stocks">
+		<type name="double precision"/>
+	</column>
+	<column name="developing_stocks">
+		<type name="double precision"/>
+	</column>
+	<column name="fic">
+		<type name="double precision"/>
+	</column>
+	<column name="mm">
+		<type name="double precision"/>
+	</column>
+	<column name="realestate">
+		<type name="double precision"/>
+	</column>
+	<column name="other_property">
+		<type name="double precision"/>
+	</column>
+	<constraint name="instrument_pkey" type="pk-constr" table="public.instrument">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="recording_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="recording">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="1460" y="220"/>
+	<column name="id" not-null="true" sequence="public.recording_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="userid" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="ondate">
+		<type name="date"/>
+	</column>
+	<constraint name="recording_pkey" type="pk-constr" table="public.recording">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="account_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="account">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="60" y="440"/>
+	<column name="id" not-null="true" sequence="public.account_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="accounttypeid">
+		<type name="integer"/>
+	</column>
+	<column name="recordingid">
+		<type name="integer"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="defaultcurrency">
+		<type name="character varying" length="3"/>
+	</column>
+	<constraint name="account_pkey" type="pk-constr" table="public.account">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="lot_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+</sequence>
+
+<table name="lot">
+	<schema name="public"/>
+	<role name="&quot;FAS&quot;"/>
+	<position x="740" y="460"/>
+	<column name="id" not-null="true" sequence="public.lot_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="accountid">
+		<type name="integer"/>
+	</column>
+	<column name="instrumentid">
+		<type name="integer"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="currency">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="amount">
+		<type name="numeric"/>
+	</column>
+	<constraint name="lot_pkey" type="pk-constr" table="public.lot">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="rate_currencyid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.currency" table="public.rate">
+	<columns names="currencyid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="currency_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.currency" table="public.country">
+	<columns names="currency" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="country_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.country" table="public.accounttype">
+	<columns names="countryid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="recording_userid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;user&quot;" table="public.recording">
+	<columns names="userid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="account_defaultcurrency_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.currency" table="public.account">
+	<columns names="defaultcurrency" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="account_typeid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.accounttype" table="public.account">
+	<columns names="accounttypeid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="account_recoringid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.recording" table="public.account">
+	<columns names="recordingid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="lot_instrumentid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.instrument" table="public.lot">
+	<columns names="instrumentid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="lot_currency_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.currency" table="public.lot">
+	<columns names="currency" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="lot_accountid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.account" table="public.lot">
+	<columns names="accountid" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_rate_currency" type="relfk"
+	 custom-color="#642ac0"
+	 src-table="public.rate"
+	 dst-table="public.currency"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_country_currency" type="relfk"
+	 custom-color="#f1a25a"
+	 src-table="public.country"
+	 dst-table="public.currency"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_accounttype_country" type="relfk"
+	 custom-color="#c1851b"
+	 src-table="public.accounttype"
+	 dst-table="public.country"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_recording_user" type="relfk"
+	 custom-color="#33e8e7"
+	 src-table="public.recording"
+	 dst-table="public.&quot;user&quot;"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_account_currency" type="relfk"
+	 custom-color="#9d7667"
+	 src-table="public.account"
+	 dst-table="public.currency"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_account_accounttype" type="relfk"
+	 custom-color="#1ed13b"
+	 src-table="public.account"
+	 dst-table="public.accounttype"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_account_recording" type="relfk"
+	 custom-color="#d67d10"
+	 src-table="public.account"
+	 dst-table="public.recording"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_lot_instrument" type="relfk"
+	 custom-color="#44c8da"
+	 src-table="public.lot"
+	 dst-table="public.instrument"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_lot_currency" type="relfk"
+	 custom-color="#ab37f7"
+	 src-table="public.lot"
+	 dst-table="public.currency"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_lot_account" type="relfk"
+	 custom-color="#675785"
+	 src-table="public.lot"
+	 dst-table="public.account"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
