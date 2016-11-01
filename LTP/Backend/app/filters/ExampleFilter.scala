@@ -2,7 +2,10 @@ package filters
 
 import akka.stream.Materializer
 import javax.inject._
+
 import play.api.mvc._
+import play.filters.cors.CORSFilter
+
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
