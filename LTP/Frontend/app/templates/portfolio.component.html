@@ -1,0 +1,8 @@
+
+<div>
+    <h1><input [(ngModel)]="portfolio.name" placeholder="name" class="form-control form-control-success"></h1>
+</div>
+
+<li *ngFor="let account of portfolio.accounts">
+    <span> {{account.id}} </span> {{account.name}}
+</li>
