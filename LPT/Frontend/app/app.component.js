@@ -59,7 +59,7 @@ var AppComponent = (function () {
         core_1.Component({
             selector: 'my-app',
             providers: [data_service_1.DataService],
-            template: "\n    <h2>{{title}}</h2>    \n    <h3>\n        <b>{{portfolio.name}}</b>\n        <b>{{quote?.author}}</b>\n    </h3>    \n    <my-portfolio [portfolio]=\"portfolio\"></my-portfolio>\n    <div *ngIf=\"quote\"><my-quote [quote]=\"quote\"></my-quote></div>\n    \n"
+            template: "\n    <h2>{{title}}</h2>    \n    <h3>\n        <b>{{portfolio.name}}</b>\n    </h3>    \n    <my-portfolio [portfolio]=\"portfolio\"></my-portfolio>\n    <div *ngIf=\"quote\"><my-quote [quote]=\"quote\"></my-quote></div>\n    \n"
         }), 
         __metadata('design:paramtypes', [data_service_1.DataService])
     ], AppComponent);

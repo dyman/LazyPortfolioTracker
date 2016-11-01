@@ -10,7 +10,6 @@ import {DataService} from "./data.service";
     <h2>{{title}}</h2>    
     <h3>
         <b>{{portfolio.name}}</b>
-        <b>{{quote?.author}}</b>
     </h3>    
     <my-portfolio [portfolio]="portfolio"></my-portfolio>
     <div *ngIf="quote"><my-quote [quote]="quote"></my-quote></div>
