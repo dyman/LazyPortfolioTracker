@@ -12,13 +12,13 @@ var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
 var Rx_1 = require('rxjs/Rx');
-var app_constants_1 = require('./app.constants');
+var app_constants_1 = require('../app.constants');
 var DataService = (function () {
     function DataService(_http, _configuration) {
         var _this = this;
         this._http = _http;
         this._configuration = _configuration;
-        this.GetSingle = function () {
+        this.getSingleQuote = function () {
             return _this._http.get(_this.actionUrl)
                 .map(function (response) {
                 console.log("server response: " + response.json().quote);

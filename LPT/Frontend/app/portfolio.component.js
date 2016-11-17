@@ -20,7 +20,7 @@ var PortfolioComponent = (function () {
     PortfolioComponent = __decorate([
         core_1.Component({
             selector: 'my-portfolio',
-            templateUrl: 'app/templates/portfolio.component.html'
+            templateUrl: 'app/portfolio.component.html'
         }), 
         __metadata('design:paramtypes', [])
     ], PortfolioComponent);

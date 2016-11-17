@@ -1,0 +1,13 @@
+<h2>{{title}}</h2>
+<h3>
+    <b>{{portfolio.name}}</b>
+</h3>
+
+<div *ngIf="portfolio">
+    <my-portfolio [portfolio]="portfolio"></my-portfolio>
+</div>
+
+<div id="footer" *ngIf="quote">
+    <my-quote [quote]="quote"></my-quote>
+    <br>
+</div>

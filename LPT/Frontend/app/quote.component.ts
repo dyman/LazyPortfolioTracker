@@ -5,7 +5,7 @@ import {Quote} from './quote';
 
 @Component({
     selector: 'my-quote',
-    templateUrl: 'app/templates/quote.component.html'
+    templateUrl: 'app/quote.component.html'
 
 })
 

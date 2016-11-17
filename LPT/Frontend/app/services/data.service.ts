@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Http, Response, Headers} from '@angular/http';
 import 'rxjs/add/operator/map'
 import {Observable} from 'rxjs/Rx';
-import {Quote} from './quote';
-import {Configuration} from './app.constants';
+import {Quote} from '../quote';
+import {Configuration} from '../app.constants';
 
 @Injectable()
 export class DataService {
@@ -14,14 +14,14 @@ export class DataService {
     constructor(private _http: Http, private _configuration: Configuration) {
         console.log(_configuration.Server)
         this.actionUrl = _configuration.ServerWithApiUrl + 'quote';
-        console.log("dataservice created with action url: " ,this.actionUrl,this._http);
+        console.log("dataservice created with action url: ", this.actionUrl, this._http);
         this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
     }
 
 
-    public GetSingle = (): Observable<Quote> => {
+    public getSingleQuote = (): Observable<Quote> => {
         return this._http.get(this.actionUrl)
             .map((response: Response) => {
                 console.log("server response: " + (<Quote>response.json()).quote);

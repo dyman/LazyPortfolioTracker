@@ -5,7 +5,7 @@ import { Portfolio } from './portfolio';
 
 @Component({
     selector: 'my-portfolio',
-    templateUrl: 'app/templates/portfolio.component.html'
+    templateUrl: 'app/portfolio.component.html'
 
 })
 

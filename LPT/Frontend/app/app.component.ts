@@ -1,37 +1,30 @@
-import {Component, OnInit, Input, Output} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {Portfolio, Account} from './portfolio';
 import {Quote} from './quote';
-import {DataService} from "./data.service";
+import {DataService} from "./services/data.service";
 
 @Component({
     selector: 'my-app',
     providers: [DataService],
-    template: `
-    <h2>{{title}}</h2>    
-    <h3>
-        <b>{{portfolio.name}}</b>
-    </h3>    
-    <my-portfolio [portfolio]="portfolio"></my-portfolio>
-    <div *ngIf="quote"><my-quote [quote]="quote"></my-quote></div>
-    
-`
+    templateUrl: 'app/app.component.html'
 
 })
 
 
 export class AppComponent implements OnInit {
     @Input()
-    quote: Quote;
+    quote: Quote = {
+        quote: 'bullshit',
+        author: 'peter'
+    };
 
     ngOnInit(): void {
         this.getQuote();
-
-
     }
 
     getQuote(): void {
         this._dataService
-            .GetSingle()
+            .getSingleQuote()
             .subscribe((data: Quote)=>this.quote = data,
                 error=>console.log(error),
                 () => console.log('get quote complete'));

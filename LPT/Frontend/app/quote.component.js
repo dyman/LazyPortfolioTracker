@@ -20,7 +20,7 @@ var QuoteComponent = (function () {
     QuoteComponent = __decorate([
         core_1.Component({
             selector: 'my-quote',
-            templateUrl: 'app/templates/quote.component.html'
+            templateUrl: 'app/quote.component.html'
         }), 
         __metadata('design:paramtypes', [])
     ], QuoteComponent);

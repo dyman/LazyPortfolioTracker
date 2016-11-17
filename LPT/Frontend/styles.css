@@ -12,3 +12,10 @@ h2, h3 {
 body {
   margin: 2em;
 }
+
+
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}

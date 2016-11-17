@@ -11,10 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var portfolio_1 = require('./portfolio');
 var quote_1 = require('./quote');
-var data_service_1 = require("./data.service");
+var data_service_1 = require("./services/data.service");
 var AppComponent = (function () {
     function AppComponent(_dataService) {
         this._dataService = _dataService;
+        this.quote = {
+            quote: 'bullshit',
+            author: 'peter'
+        };
         this.title = 'Lazy Portfolio Tracker';
         this.copyright = 'LPT team';
         this.portfolio = {
@@ -48,7 +52,7 @@ var AppComponent = (function () {
     AppComponent.prototype.getQuote = function () {
         var _this = this;
         this._dataService
-            .GetSingle()
+            .getSingleQuote()
             .subscribe(function (data) { return _this.quote = data; }, function (error) { return console.log(error); }, function () { return console.log('get quote complete'); });
     };
     __decorate([
@@ -59,7 +63,7 @@ var AppComponent = (function () {
         core_1.Component({
             selector: 'my-app',
             providers: [data_service_1.DataService],
-            template: "\n    <h2>{{title}}</h2>    \n    <h3>\n        <b>{{portfolio.name}}</b>\n    </h3>    \n    <my-portfolio [portfolio]=\"portfolio\"></my-portfolio>\n    <div *ngIf=\"quote\"><my-quote [quote]=\"quote\"></my-quote></div>\n    \n"
+            templateUrl: 'app/app.component.html'
         }), 
         __metadata('design:paramtypes', [data_service_1.DataService])
     ], AppComponent);
