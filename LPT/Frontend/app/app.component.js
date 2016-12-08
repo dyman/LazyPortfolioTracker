@@ -52,7 +52,10 @@ var AppComponent = (function () {
     AppComponent.prototype.getQuote = function () {
         var _this = this;
         this._dataService
-            .getSingleQuote().then(function (response) { return _this.quote = response; });
+            .getSingleQuote().then(function (response) { return _this.quote = response; }).catch(function (response) { return _this.quote = {
+            quote: 'bullshit',
+            author: 'peti'
+        }; });
     };
     return AppComponent;
 }());

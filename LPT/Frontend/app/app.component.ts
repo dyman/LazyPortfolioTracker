@@ -24,7 +24,10 @@ export class AppComponent implements OnInit {
 
     getQuote(): void {
         this._dataService
-            .getSingleQuote().then(response => this.quote = response);
+            .getSingleQuote().then(response => this.quote = response).catch(response => this.quote = {
+            quote: 'bullshit',
+            author: 'peti'
+        })
 
     }
 

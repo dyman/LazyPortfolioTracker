@@ -26,8 +26,8 @@ export class DataService {
             .then((response: Response) => {
                 console.log("server response: " + (<Quote>response.json()).quote);
                 return <Quote>response.json()
-            })
-            .catch(this.handleError);
+            });
+            //.catch(this.handleError);
     }
 
     private handleError(error: Response) {

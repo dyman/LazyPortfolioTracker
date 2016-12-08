@@ -29,8 +29,8 @@ var DataService = (function () {
             .then(function (response) {
             console.log("server response: " + response.json().quote);
             return response.json();
-        })
-            .catch(this.handleError);
+        });
+        //.catch(this.handleError);
     };
     DataService.prototype.handleError = function (error) {
         console.error(error);
