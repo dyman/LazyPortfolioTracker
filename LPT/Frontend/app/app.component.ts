@@ -24,10 +24,8 @@ export class AppComponent implements OnInit {
 
     getQuote(): void {
         this._dataService
-            .getSingleQuote()
-            .subscribe((data: Quote)=>this.quote = data,
-                error=>console.log(error),
-                () => console.log('get quote complete'));
+            .getSingleQuote().then(response => this.quote = response);
+
     }
 
     constructor(private _dataService: DataService) {

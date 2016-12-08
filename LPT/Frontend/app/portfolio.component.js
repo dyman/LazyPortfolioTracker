@@ -8,23 +8,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var portfolio_1 = require('./portfolio');
+var core_1 = require("@angular/core");
+var portfolio_1 = require("./portfolio");
 var PortfolioComponent = (function () {
     function PortfolioComponent() {
     }
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', portfolio_1.Portfolio)
-    ], PortfolioComponent.prototype, "portfolio", void 0);
-    PortfolioComponent = __decorate([
-        core_1.Component({
-            selector: 'my-portfolio',
-            templateUrl: 'app/portfolio.component.html'
-        }), 
-        __metadata('design:paramtypes', [])
-    ], PortfolioComponent);
     return PortfolioComponent;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", portfolio_1.Portfolio)
+], PortfolioComponent.prototype, "portfolio", void 0);
+PortfolioComponent = __decorate([
+    core_1.Component({
+        selector: 'my-portfolio',
+        templateUrl: 'app/portfolio.component.html'
+    }),
+    __metadata("design:paramtypes", [])
+], PortfolioComponent);
 exports.PortfolioComponent = PortfolioComponent;
 //# sourceMappingURL=portfolio.component.js.map

@@ -8,9 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var portfolio_1 = require('./portfolio');
-var quote_1 = require('./quote');
+var core_1 = require("@angular/core");
+var portfolio_1 = require("./portfolio");
+var quote_1 = require("./quote");
 var data_service_1 = require("./services/data.service");
 var AppComponent = (function () {
     function AppComponent(_dataService) {
@@ -52,22 +52,21 @@ var AppComponent = (function () {
     AppComponent.prototype.getQuote = function () {
         var _this = this;
         this._dataService
-            .getSingleQuote()
-            .subscribe(function (data) { return _this.quote = data; }, function (error) { return console.log(error); }, function () { return console.log('get quote complete'); });
+            .getSingleQuote().then(function (response) { return _this.quote = response; });
     };
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', quote_1.Quote)
-    ], AppComponent.prototype, "quote", void 0);
-    AppComponent = __decorate([
-        core_1.Component({
-            selector: 'my-app',
-            providers: [data_service_1.DataService],
-            templateUrl: 'app/app.component.html'
-        }), 
-        __metadata('design:paramtypes', [data_service_1.DataService])
-    ], AppComponent);
     return AppComponent;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", quote_1.Quote)
+], AppComponent.prototype, "quote", void 0);
+AppComponent = __decorate([
+    core_1.Component({
+        selector: 'my-app',
+        providers: [data_service_1.DataService],
+        templateUrl: 'app/app.component.html'
+    }),
+    __metadata("design:paramtypes", [data_service_1.DataService])
+], AppComponent);
 exports.AppComponent = AppComponent;
 //# sourceMappingURL=app.component.js.map

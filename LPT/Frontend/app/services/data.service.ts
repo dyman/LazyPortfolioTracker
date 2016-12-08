@@ -21,9 +21,9 @@ export class DataService {
     }
 
 
-    public getSingleQuote = (): Observable<Quote> => {
-        return this._http.get(this.actionUrl)
-            .map((response: Response) => {
+    public getSingleQuote(): Promise<Quote> {
+        return this._http.get(this.actionUrl).toPromise()
+            .then((response: Response) => {
                 console.log("server response: " + (<Quote>response.json()).quote);
                 return <Quote>response.json()
             })

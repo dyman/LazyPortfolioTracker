@@ -8,24 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var http_1 = require('@angular/http');
-require('rxjs/add/operator/map');
-var Rx_1 = require('rxjs/Rx');
-var app_constants_1 = require('../app.constants');
+var core_1 = require("@angular/core");
+var http_1 = require("@angular/http");
+require("rxjs/add/operator/map");
+var Rx_1 = require("rxjs/Rx");
+var app_constants_1 = require("../app.constants");
 var DataService = (function () {
     function DataService(_http, _configuration) {
-        var _this = this;
         this._http = _http;
         this._configuration = _configuration;
-        this.getSingleQuote = function () {
-            return _this._http.get(_this.actionUrl)
-                .map(function (response) {
-                console.log("server response: " + response.json().quote);
-                return response.json();
-            })
-                .catch(_this.handleError);
-        };
         console.log(_configuration.Server);
         this.actionUrl = _configuration.ServerWithApiUrl + 'quote';
         console.log("dataservice created with action url: ", this.actionUrl, this._http);
@@ -33,15 +24,23 @@ var DataService = (function () {
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
     }
+    DataService.prototype.getSingleQuote = function () {
+        return this._http.get(this.actionUrl).toPromise()
+            .then(function (response) {
+            console.log("server response: " + response.json().quote);
+            return response.json();
+        })
+            .catch(this.handleError);
+    };
     DataService.prototype.handleError = function (error) {
         console.error(error);
         return Rx_1.Observable.throw(error.json().error || 'Server error');
     };
-    DataService = __decorate([
-        core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http, app_constants_1.Configuration])
-    ], DataService);
     return DataService;
 }());
+DataService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [http_1.Http, app_constants_1.Configuration])
+], DataService);
 exports.DataService = DataService;
 //# sourceMappingURL=data.service.js.map
