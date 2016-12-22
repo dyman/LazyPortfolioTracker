@@ -338,8 +338,8 @@ trait Tables {
   /** Entity class storing rows of table Recording
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
    *  @param userid Database column userid SqlType(int4)
-   *  @param ondate Database column ondate SqlType(date), Default(None) */
-  case class RecordingRow(id: Int, userid: Int, ondate: Option[java.sql.Date] = None)
+   *  @param valudate Database column valudate SqlType(date), Default(None) */
+  case class RecordingRow(id: Int, userid: Int, valudate: Option[java.sql.Date] = None)
   /** GetResult implicit for fetching RecordingRow objects using plain SQL queries */
   implicit def GetResultRecordingRow(implicit e0: GR[Int], e1: GR[Option[java.sql.Date]]): GR[RecordingRow] = GR{
     prs => import prs._
@@ -347,16 +347,16 @@ trait Tables {
   }
   /** Table description of table recording. Objects of this class serve as prototypes for rows in queries. */
   class Recording(_tableTag: Tag) extends Table[RecordingRow](_tableTag, "recording") {
-    def * = (id, userid, ondate) <> (RecordingRow.tupled, RecordingRow.unapply)
+    def * = (id, userid, valudate) <> (RecordingRow.tupled, RecordingRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(userid), ondate).shaped.<>({r=>import r._; _1.map(_=> RecordingRow.tupled((_1.get, _2.get, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(userid), valudate).shaped.<>({r=>import r._; _1.map(_=> RecordingRow.tupled((_1.get, _2.get, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column userid SqlType(int4) */
     val userid: Rep[Int] = column[Int]("userid")
-    /** Database column ondate SqlType(date), Default(None) */
-    val ondate: Rep[Option[java.sql.Date]] = column[Option[java.sql.Date]]("ondate", O.Default(None))
+    /** Database column valudate SqlType(date), Default(None) */
+    val valudate: Rep[Option[java.sql.Date]] = column[Option[java.sql.Date]]("valudate", O.Default(None))
 
     /** Foreign key referencing User (database name recording_userid_fkey) */
     lazy val userFk = foreignKey("recording_userid_fkey", userid, User)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)

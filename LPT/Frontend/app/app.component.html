@@ -2,26 +2,22 @@
 <ngb-tabset>
     <ngb-tab title="Accounts">
         <template ngbTabContent>
-            <p>Ide jon majd valami</p>
+            <p>Account editor</p>
         </template>
     </ngb-tab>
     <ngb-tab>
-        <template ngbTabTitle><b>Fancy</b> title</template>
-        <template ngbTabContent><p>Meg ide is jon valami</p>
+        <template ngbTabTitle><b><b>{{portfolio.name}}</b></b></template>
+        <template ngbTabContent>
+            <div *ngIf="portfolio">
+                <my-portfolio [portfolio]="portfolio"></my-portfolio>
+            </div>
         </template>
     </ngb-tab>
+
 </ngb-tabset>
 
-
-<h3>
-    <b>{{portfolio.name}}</b>
-</h3>
-
-<div *ngIf="portfolio">
-    <my-portfolio [portfolio]="portfolio"></my-portfolio>
-</div>
-
-<div id="footer" *ngIf="quote">
+<div></div>
+<div class="navbar navbar-fixed-bottom" id="footer" *ngIf="quote">
     <my-quote [quote]="quote"></my-quote>
     <br>
 </div>

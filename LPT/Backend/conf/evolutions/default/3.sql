@@ -18,7 +18,7 @@ CREATE TABLE recording
 (
   id serial NOT NULL,
   userid integer NOT NULL,
-  ondate date,
+  valudate date,
   CONSTRAINT recording_pkey PRIMARY KEY (id),
   CONSTRAINT recording_userid_fkey FOREIGN KEY (userid)
       REFERENCES "user" (id) MATCH SIMPLE

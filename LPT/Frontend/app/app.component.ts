@@ -3,6 +3,8 @@ import {Portfolio, Account} from './portfolio';
 import {Quote} from './quote';
 import {DataService} from "./services/data.service";
 
+
+
 @Component({
     selector: 'my-app',
     providers: [DataService],
