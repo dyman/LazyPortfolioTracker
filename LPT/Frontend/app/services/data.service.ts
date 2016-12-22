@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map'
 import {Observable} from 'rxjs/Rx';
 import {Quote} from '../quote';
 import {Configuration} from '../app.constants';
+import {Accounttypes} from "../accounts/accounttypes";
 
 @Injectable()
 export class DataService {
@@ -13,7 +14,7 @@ export class DataService {
 
     constructor(private _http: Http, private _configuration: Configuration) {
         console.log(_configuration.Server)
-        this.actionUrl = _configuration.ServerWithApiUrl + 'quote';
+        this.actionUrl = _configuration.ServerWithApiUrl;
         console.log("dataservice created with action url: ", this.actionUrl, this._http);
         this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
@@ -22,13 +23,23 @@ export class DataService {
 
 
     public getSingleQuote(): Promise<Quote> {
-        return this._http.get(this.actionUrl).toPromise()
+        return this._http.get(this.actionUrl + 'quote').toPromise()
             .then((response: Response) => {
                 console.log("server response: " + (<Quote>response.json()).quote);
                 return <Quote>response.json()
             });
-            //.catch(this.handleError);
+        //.catch(this.handleError);
     }
+
+
+    public getAccountTypes(): Promise<Accounttypes[]> {
+        return this._http.get(this.actionUrl + 'accounttypes').toPromise()
+            .then((response: Response) => {
+                //console.log("server response: "(<Accounttypes[]>response.json()));
+                return <Accounttypes[]>response.json()
+            });
+    }
+
 
     private handleError(error: Response) {
         console.error(error);

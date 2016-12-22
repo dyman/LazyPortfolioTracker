@@ -18,19 +18,26 @@ var DataService = (function () {
         this._http = _http;
         this._configuration = _configuration;
         console.log(_configuration.Server);
-        this.actionUrl = _configuration.ServerWithApiUrl + 'quote';
+        this.actionUrl = _configuration.ServerWithApiUrl;
         console.log("dataservice created with action url: ", this.actionUrl, this._http);
         this.headers = new http_1.Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
     }
     DataService.prototype.getSingleQuote = function () {
-        return this._http.get(this.actionUrl).toPromise()
+        return this._http.get(this.actionUrl + 'quote').toPromise()
             .then(function (response) {
             console.log("server response: " + response.json().quote);
             return response.json();
         });
         //.catch(this.handleError);
+    };
+    DataService.prototype.getAccountTypes = function () {
+        return this._http.get(this.actionUrl + 'accounttypes').toPromise()
+            .then(function (response) {
+            //console.log("server response: "(<Accounttypes[]>response.json()));
+            return response.json();
+        });
     };
     DataService.prototype.handleError = function (error) {
         console.error(error);

@@ -2,7 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Portfolio, Account} from './portfolio';
 import {Quote} from './quote';
 import {DataService} from "./services/data.service";
-
+import {Accounttypes} from "./accounts/accounttypes";
 
 
 @Component({
@@ -15,10 +15,13 @@ import {DataService} from "./services/data.service";
 
 export class AppComponent implements OnInit {
     @Input()
-    quote: Quote = {
-        quote: 'bullshit',
-        author: 'peter'
-    };
+    quote: Quote;
+    //= {
+    //     quote: 'bullshit',
+    //     author: 'peter'
+    // };
+
+    accounttypes: Accounttypes[];
 
     ngOnInit(): void {
         this.getQuote();
@@ -30,6 +33,8 @@ export class AppComponent implements OnInit {
             quote: 'bullshit',
             author: 'peti'
         })
+        this._dataService
+            .getAccountTypes().then(response => this.accounttypes = response)
 
     }
 

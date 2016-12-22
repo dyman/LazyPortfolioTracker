@@ -15,10 +15,6 @@ var data_service_1 = require("./services/data.service");
 var AppComponent = (function () {
     function AppComponent(_dataService) {
         this._dataService = _dataService;
-        this.quote = {
-            quote: 'bullshit',
-            author: 'peter'
-        };
         this.title = 'Lazy Portfolio Tracker';
         this.copyright = 'LPT team';
         this.portfolio = {
@@ -56,6 +52,8 @@ var AppComponent = (function () {
             quote: 'bullshit',
             author: 'peti'
         }; });
+        this._dataService
+            .getAccountTypes().then(function (response) { return _this.accounttypes = response; });
     };
     return AppComponent;
 }());

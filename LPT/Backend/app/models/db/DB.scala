@@ -4,12 +4,11 @@
 
 package models.db
 
-import models.db.Tables.Quote
-
+import models.db.Tables.{Accounttype, Quote}
 import play.Logger
 import play.api.cache._
-
 import javax.inject.Inject
+
 import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.Future
@@ -20,6 +19,31 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
   */
 
 class DB @Inject()(cache: CacheApi) {
+  def getAccountTypes: Future[Seq[Tables.AccounttypeRow]] = {
+
+    Logger.debug("get account Types")
+    if (cache.get("accountTypes").isEmpty) {
+      try {
+        Logger.debug("querying db")
+        val acS = for (a <- Accounttype) yield a
+        val f = DB.myDb.run(acS.result)
+        f.onSuccess { case ret => cache.set("accountTypes", ret) }
+        f
+      }
+      finally {
+
+
+      }
+    }
+    else {
+      Logger.debug("queyriing cache")
+      Future {
+        cache.get("accountTypes").asInstanceOf[Option[Seq[Tables.AccounttypeRow]]].get
+      }
+    }
+
+  }
+
 
   def getCachesQuotes: Future[Seq[Tables.QuoteRow]] = {
 
